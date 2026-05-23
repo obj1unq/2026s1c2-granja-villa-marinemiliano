@@ -17,69 +17,69 @@ object hector {
 	method mover(nuevaPosition){position = nuevaPosition.siguiente(position)}
 
     method sembrar(cultivo) {self.ponerCultivo(cultivo)}
-	
+
+
+	method ponerCultivo(cultivo) {
+	  
+	   cultivo.posicionarCultivoEn(self.position())
+	   self.agregarCultivoSembrado(cultivo)
+	   game.addVisual(cultivo) // Se agrega a modo de prueba
+	}
+
+
 	method regar() {  
 	
 		self.validarCultivo()
-		self.regadio(self.obtenerCultivoAca())
+		self.regadio(self.obtenerCultivoDeLaPosicion())
 	}
 
 	method validarCultivo() {
 	  
     	return if(not granjaDeHector.hayCultivoAca()) {
 		
-	    self.error("No tengo nada para hacer aca, parcela vacia")
+	    self.error("No puedo cosechar ni regar aca, parcela vacia")
 	    //game.say(self,"No tengo nada para regar")
 	  }
 	}
 
-
-	//EL ACTO DE SEMBRAR Y REGAR SE LE CONOCE COMO REGADIO
+	//AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
 	method regadio(cultivo) {
 	  
-	  self.sacarCultivo(cultivo)
 	  cultivo.madurar()
-	  self.ponerCultivo(cultivo)
 	  game.say(self, "REGUE!")
 	}
 
-
-	method obtenerCultivoAca(){
+	method obtenerCultivoDeLaPosicion(){
 		
 		//DIFERENTES FORMAS DE TRAERME EL CULTIVO QUE SE 
 		//ENCUENTRA EN LA MISMA POSICION
 
 		//return game.colliders(self.cultivosSembrados().get(1))
 		//return game.colliders(self).first()
-		 return game.uniqueCollider(self)
+		  return game.uniqueCollider(self)
 	}
 
-	method ponerCultivo(cultivo) {
-	  
-	   self.colocarCultivo(cultivo)
-	   self.agregarCultivoSembrado(cultivo)
-	   game.addVisual(cultivo) // Se agrega a modo de prueba
-	}
-
-
-	method agregarCultivoSembrado(cultivo) {
-	  
-	  cultivosSembrados.add(cultivo)  
-	}
-
-
-	method colocarCultivo(cultivo) {
-	  
-	   cultivo.position(self.position()) 
-	}
+	method agregarCultivoSembrado(cultivo) {cultivosSembrados.add(cultivo)}
 
 	method sacarCultivo(cultivo) {
 
 		cultivosSembrados.remove(cultivo)
 		game.removeVisual(cultivo)
 	}
+	
+	method cosechar() {
+		
+		self.validarCultivo()
 
-	method cosechar() {self.validarCultivo()}
+		if(self.puedeCosechar(self.obtenerCultivoDeLaPosicion()))
+		{
+			
+			self.cultivosCosechados()
+			self.sacarCultivo(self.obtenerCultivoDeLaPosicion())	
+		}
+	}
+
+	method puedeCosechar(cultivo) {return cultivo.soyCosechable(cultivo)}
 
 
 	//PROBAR PONIENDO EL MAIZ NO SOBRE HECTOR SINO AL LADO 

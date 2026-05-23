@@ -26,6 +26,7 @@ object farmVille{
     }
 
     method dibujarMapa() {
+        
         game.height(self.alto())
         game.width(self.ancho())
 
