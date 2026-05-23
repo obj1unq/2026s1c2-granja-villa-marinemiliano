@@ -44,13 +44,14 @@ object hector {
 	}
 
 
-	//DEVUELVE EL PRIMERO DE LA LISTA QUE ME TRAE COLLIDERS
-	//COLLIDERS AL PASARLE EL GRANJERO (SELF), LO EXCEPTUA 
-	//DIRECTAMENTE DE LA POSICION
 	method obtenerCultivoAca(){
 		
+		//DIFERENTES FORMAS DE TRAERME EL CULTIVO QUE SE 
+		//ENCUENTRA EN LA MISMA POSICION
+
 		//return game.colliders(self.cultivosSembrados().get(1))
-		return game.colliders(self).first()	
+		//return game.colliders(self).first()
+		 return game.uniqueCollider(self)
 	}
 
 	method ponerCultivo(cultivo) {
