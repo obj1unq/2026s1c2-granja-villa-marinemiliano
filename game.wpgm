@@ -1,18 +1,41 @@
 import wollok.game.*
 import personaje.*
 import cultivos.*
+import granja.*
+import direcciones.*
+
 
 program farmville {
-	//  CONFIG	
+
+	//CONFIG	
 	game.title("La granja")
-	game.height(10)
-	game.width(10)
+	
+	farmVille.dibujarMapa()
 	game.ground("ground.png")
 
-	//  VISUALES
- 	game.addVisualCharacter(personaje)
- 	game.addVisual(new Maiz()) // Se agrega a modo de prueba
- 	
+	game.addVisualCharacter(hector)
+
+	keyboard.a().onPressDo({ hector.mover(izquierda)})
+	keyboard.d().onPressDo({ hector.mover(derecha)})
+	keyboard.w().onPressDo({ hector.mover(arriba)})
+	keyboard.s().onPressDo({ hector.mover(abajo)})	
+
+	keyboard.m().onPressDo({hector.sembrar(new Maiz(image = "corn_baby.png"))})
+	keyboard.t().onPressDo({hector.sembrar(new Trigo(image = "wheat_0.png"))})
+	keyboard.o().onPressDo({hector.sembrar(new Tomaco(image = "tomaco.png"))})
+	
+	keyboard.r().onPressDo({hector.regar()})
+	
+	keyboard.c().onPressDo({hector.cosechar()})
+
  	//  COMIENZA
 	game.start()
 }
+    // const maizUno = new Maiz(image = "corn_baby.png")
+	// const trigoUno = new Trigo(image = "wheat_0.png")
+	// const trigoDos = new Trigo(image = "wheat_0.png")
+
+	// //  VISUALES
+ 	// game.addVisualCharacter(hector)
+	// game.addVisual(maizUno)
+	// game.addVisual(trigoUno)

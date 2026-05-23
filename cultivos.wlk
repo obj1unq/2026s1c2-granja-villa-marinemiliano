@@ -1,12 +1,36 @@
 import wollok.game.*
+import personaje.*
+
 
 class Maiz {
-	method position() {
-		// TODO: hacer que aparezca donde lo plante Hector
-		return game.at(1, 1)
-	}
-	method image() {
-		// TODO: hacer que devuelva la imagen que corresponde
-		return "corn_baby.png"
-	}
+
+	var property position = game.center() 
+	var property image  
+
+	method madurar() {image = "corn_adult.png"}
+
+	method crecerCultivo(cultivo) { }
+
+	//method esCosechable() {return  true}
+}
+
+class Trigo {
+	
+	var property position = game.center() 
+	var property image  
+
+	method madurar() {image = "wheat_1.png"}
+
+	//method esCosechable() {return  true}
+}
+
+
+class Tomaco {
+
+	var property position = game.at(1, 1) 
+	var property image  
+
+	method madurar() {image = "tomaco.png"}
+	
+	//method esCosechable() {return  true}
 }
