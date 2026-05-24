@@ -24,9 +24,14 @@ program farmville {
 	keyboard.t().onPressDo({hector.sembrar(new Trigo(image = "wheat_0.png"))})
 	keyboard.o().onPressDo({hector.sembrar(new Tomaco(image = "tomaco.png"))})
 	
-	keyboard.r().onPressDo({hector.regar()})
-	
+	keyboard.r().onPressDo({hector.regar()})	
 	keyboard.c().onPressDo({hector.cosechar()})
+
+	keyboard.v().onPressDo({hector.vender()})
+	
+	keyboard.space().onPressDo({hector.estadoContable()})
+
+
 
  	//  COMIENZA
 	game.start()
