@@ -26,7 +26,6 @@ class Maiz {
 	//para respetar lo polimorfico
 	method validarEspacio(mensaje,posicion) { }
 
-
 }
 
 class Trigo {
@@ -123,8 +122,8 @@ class Tomaco {
 	}
 
 
-	//ES EL TOMATE ACA QUIEN TIENE QUE FIJARSE SI ESTA OCUPADA LA CELDA
-	//DE ARRIBA SUYO
+	//ES EL TOMATE ACA QUIEN TIENE QUE PREGUNTARLE A LA GRANJA SI 
+	//ESTA OCUPADA LA CELDA DE ARRIBA SUYO
 
 	method validarEspacio(mensaje,posicion) {
 	  
@@ -226,14 +225,27 @@ class Aspersor {
 	}
 
 
-	method validarEspacio(mensaje,posicion) {
-	  
-	  const nuevaPosicion = posicion
-	  
-      return if(granja.hayElementoEnPosicion(nuevaPosicion)) {
-		
-		self.mensajeError(mensaje)
-	  }
-	}
+	method validarEspacio(mensaje,posicion) { }
 
+}
+
+class Mercado{
+
+	var monedasParaAbonar = 10000
+
+	method monedasParaAbonar() {return monedasParaAbonar}
+
+	var property mercaderia = []
+
+	method vender() {
+	  
+	  self.descontar(self.monedasParaAbonar())
+	} 
+
+	method descontar(monedasParaAbonar) {
+	  
+	  monedasParaAbonar = monedasParaAbonar - 
+	} 
+
+	method validarEspacio(mensaje,posicion) { }
 }

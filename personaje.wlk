@@ -151,12 +151,17 @@ object hector {
 	method vender() {
 	  
 	  self.validarListaCosechados()
-	 
+	  
+	  self.validarPuntoDeVenta()
+
 	  self.sumarPreciosCultivos(self.cultivosCosechados())
 	 
+	  
+
+	  self.vaciarLista(self.cultivosCosechados())
+
 	  self.mensaje(self,"Todo vendido!")
 	 
-	  self.vaciarLista(self.cultivosCosechados())
 	}   
 
 	method validarListaCosechados() {
