@@ -55,12 +55,29 @@ object farmVille{
         return position.x().between(0, game.width() -1) and position.y().between(0, game.height() -1 )
     }
     
-    method hayCultivoAca() {
+    
+    //esta evalua si hay un objeto en la celda donde tambien esta
+    //el granjero
+    method hayElementoAca() {
         
         return not game.colliders(self.granjero()).isEmpty()
         //return game.colliders(self.granjero()).size() > 0
         //return game.colliders(hector).size() > 0
     }
+
+
+    //esta va y evalua si en tal posicion hay algun objeto
+    //la tuve que incorporar en el problema del tomate cuando
+    //se riega y tiene que verificar si ya hay un cultivo arriba suyo
+    method hayElementoEnPosicion(nuevaPosicion) {
+    
+      return not game.getObjectsIn(nuevaPosicion).isEmpty()
+    }
+
+
+
+
+
 }
 
     //SEGUNDA OPCION QUE TAMBIEN FUNCIONA

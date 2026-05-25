@@ -1,6 +1,6 @@
 import wollok.game.*
 import personaje.*
-import cultivos.*
+import elementos.*
 import granja.*
 import direcciones.*
 
@@ -28,8 +28,11 @@ program farmville {
 	keyboard.c().onPressDo({hector.cosechar()})
 
 	keyboard.v().onPressDo({hector.vender()})
-	
 	keyboard.space().onPressDo({hector.estadoContable()})
+	
+	//uso la f porque la a ya esta ocupada
+	
+	keyboard.f().onPressDo({hector.ponerAspersor(new Aspersor())})
 
 
 

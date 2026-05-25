@@ -1,5 +1,5 @@
 import wollok.game.*
-import cultivos.*
+import elementos.*
 import direcciones.*
 import granja.*
 
@@ -7,17 +7,23 @@ import granja.*
 
 object hector {
 
-	var property granjaDeHector = farmVille 
+	var property granja = farmVille 
 	var property position = game.center()
 	const property image = "mplayer.png"
-	//const property cultivosSembrados = []
+	
+	const property cultivosSembrados = []
 	const property cultivosCosechados = []
 
 	//OJO PRECALCULO ACA. CREO QUE ASI ES CORRECTO
 	var oroRecibido = 0
-	method oroRecibido() {return oroRecibido}
+	
+
+	//MOVIMIENTO DEL PERSONAJE
 
 	method mover(nuevaPosition){position = nuevaPosition.siguiente(position)}
+
+
+	//MENSAJES PARAMETRIZADOS
 
 	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
 
@@ -26,14 +32,25 @@ object hector {
 
 	//SEMBRAR
 
-    method sembrar(cultivo) {self.ponerCultivo(cultivo)}
+    method sembrar(cultivo) {
+		
+		self.ponerElemento(cultivo,"Sembrando ")
 
-	method ponerCultivo(cultivo) {
+		self.cultivosSembrados().add(cultivo)	
+	}
+
+	
+	    //todos los metodos respondian al nombre de cultivo pero cuando se 
+		//agrego aspersor tuve que generalizar y cambiar a que hector agrega "elementos"
+
+
+	method ponerElemento(elemento,mensaje) {
 	  
-	   cultivo.posicionarCultivoEn(self.position())
-	   //self.agregarCultivoSembrado(cultivo)
-	   game.addVisual(cultivo) // Se agrega a modo de prueba
-	   self.mensaje(self,"Sembrando " + cultivo.nombreCultivo())
+	   elemento.posicionarElementoEn(self.position())
+	
+	   game.addVisual(elemento) // Se agrega a modo de prueba
+	
+	   self.mensaje(self, mensaje + elemento.nombreElemento())
 	}
 
 
@@ -41,52 +58,63 @@ object hector {
 
 	method regar() {  
 	
-		self.validarCultivo("no puedo regar, parcela vacia")
+
+		self.validarEspacio("no puedo regar, parcela vacia")
+
+
+		//como al validar ya se que personaje y un cultivo estan en la misma
+		//parcela, con la funcion que le paso a regadio obtengo el cultivo que
+		//se encuentra en esa posicion
+
+
 		self.regadio(self.cultivoEnLaPosicion())
 	}
 
-	method validarCultivo(mensaje) {
+
+	method validarEspacio(mensaje) {
 	  
-    	return if(not granjaDeHector.hayCultivoAca()) {
+    	return if(not granja.hayElementoAca()) {
 		
-		self.mensajeError(mensaje)
-	    //game.say(self,"No tengo nada para regar")
-	  }
+			//self.mensajeError(mensaje)
+			game.say(self,mensaje)
+		}
 	}
+
 
 	//AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
+	
 	method regadio(cultivo) {
-	  
+
+
 	  cultivo.madurar()
-	  self.mensaje(self,"Regando " + cultivo.nombreCultivo())
+
+	  self.mensaje(self,"Regando " + cultivo.nombreElemento())
+
 	}
 
-	method cultivoEnLaPosicion(){
-		
+	method cultivoEnLaPosicion(){	
+ 
+		//me consigo el cultivo que se encuentra en la misma posicion
 
-		//comprobe que tanto unique como colliders NO obtiene el objeto sino el visual, OJO ACA! 
 		return game.uniqueCollider(self)
-		
-		//return game.colliders(self).first()
 		
 
 		//OTRAS DIFERENTES FORMAS DE TRAERME EL CULTIVO QUE SE 
 		//ENCUENTRA EN LA MISMA POSICION
 
 		//return game.colliders(self.cultivosSembrados().get(1))
-
+	
+		//return game.colliders(self).first()
 	}
-
 
 	//COSECHAR
 
 	method cosechar() {
 		
-		self.validarCultivo("no puedo cosechar,parcela vacia")
+		self.validarEspacio("no puedo cosechar,parcela vacia")
 
 		if(self.puedeCosechar(self.cultivoEnLaPosicion()))
 		{
-
 
 			self.agregarCultivoCosechado(self.cultivoEnLaPosicion())
 			
@@ -103,43 +131,41 @@ object hector {
 		}
 	}
 
-	method nombreCultivoEnPosicion() {
-	  
-	  return self.cultivoEnLaPosicion().nombreCultivo()
-	}
+
+	method nombreCultivoEnPosicion() {return self.cultivoEnLaPosicion().nombreElemento()}
+
 
 	method agregarCultivoCosechado(cultivo){cultivosCosechados.add(cultivo)}
 
-	method sacarCultivoCosechado(cultivo) {
 
-		game.removeVisual(cultivo)
-	}
+	method sacarCultivoCosechado(cultivo) {game.removeVisual(cultivo)}
+
 
 	method puedeCosechar(cultivo) {return cultivo.soyCosechable(cultivo)}
 
-	method estadoContable() {
-	  
-	  self.mensaje(self, "tengo " + self.cantidadPlantas() + " para vender. " +
-	  		   " recaudacion por ventas: " + self.oroRecibido() + " monedas" )
-	}
 
+	
    //VENTA
 
-	method cantidadPlantas() {
-	  
-		return self.cultivosCosechados().size()
-	}
 
 	method vender() {
 	  
 	  self.validarListaCosechados()
+	 
 	  self.sumarPreciosCultivos(self.cultivosCosechados())
+	 
 	  self.mensaje(self,"Todo vendido!")
+	 
 	  self.vaciarLista(self.cultivosCosechados())
 	}   
 
-	//generica vacia cualquier lista
-	method vaciarLista(lista) {lista.clear()}
+	method validarListaCosechados() {
+	  
+	  if (self.cultivosCosechados().isEmpty()) {
+		
+			self.mensajeError("no hay cultivos para vender")
+	  }
+	}
 
 	method sumarPreciosCultivos(listaCosechados) {
 	  
@@ -149,15 +175,49 @@ object hector {
 							({cultivo => self.precioCultivo(cultivo)})
 	}
 
+
 	method precioCultivo(cultivo) {return cultivo.precio()}
 
-	method validarListaCosechados() {
+
+	//generica vacia cualquier lista
+	method vaciarLista(lista) {lista.clear()}
+
+
+
+	//ESTADO CONTABLE
+
+	method estadoContable() {
 	  
-	  if (self.cultivosCosechados().isEmpty()) {
+	  self.mensaje(self, "tengo " + self.cantidadPlantas() + " para vender. " +
+	  		   " recaudacion por ventas: " + self.oroRecibido() + " monedas" )
+	}
+
+	method cantidadPlantas() {return self.cultivosCosechados().size()}
+
+	method oroRecibido() {return oroRecibido}
+
+
+
+	//BONUS ASPERSORES
+
+	method ponerAspersor(unAspersor) {
+
+		self.validarEspacioLleno("celda ocupada,no puedo poner aspersor")
 		
-		self.mensajeError("no hay cultivos para vender")
+		self.ponerElemento(unAspersor,"Coloqué ") 
+		
+		unAspersor.regar()
+	}
+
+
+	method validarEspacioLleno(mensaje) {
+	  
+      return if(granja.hayElementoAca()) {
+		
+		self.mensajeError(mensaje)
 	  }
 	}
+	
 
 	//PROBAR PONIENDO EL MAIZ NO SOBRE HECTOR SINO AL LADO 
 	// method sembrar(cultivo) 
@@ -167,7 +227,7 @@ object hector {
 
 	//SEGUNDA OPCION QUE TAMBIEN FUNCIONA 
 	
-	//method regar() {return  granjaDeHector.validarRiegoEn(self.position())}
+	//method regar() {return  granja.validarRiegoEn(self.position())}
 
 	//method esCosechable() {return false}
 }
