@@ -15,6 +15,12 @@ program farmville {
 
 	game.addVisualCharacter(hector)
 
+	const mercadoUno = new Mercado(position = game.at(6,5))
+	const mercadoDos = new Mercado(position = game.at(2,5))
+
+	game.addVisual(mercadoUno)
+	game.addVisual(mercadoDos)
+
 	keyboard.a().onPressDo({ hector.mover(izquierda)})
 	keyboard.d().onPressDo({ hector.mover(derecha)})
 	keyboard.w().onPressDo({ hector.mover(arriba)})
@@ -35,10 +41,11 @@ program farmville {
 	keyboard.f().onPressDo({hector.ponerAspersor(new Aspersor())})
 
 
-
  	//  COMIENZA
 	game.start()
 }
+
+
     // const maizUno = new Maiz(image = "corn_baby.png")
 	// const trigoUno = new Trigo(image = "wheat_0.png")
 	// const trigoDos = new Trigo(image = "wheat_0.png")

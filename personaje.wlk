@@ -17,7 +17,6 @@ object hector {
 	//OJO PRECALCULO ACA. CREO QUE ASI ES CORRECTO
 	var oroRecibido = 0
 	
-
 	//MOVIMIENTO DEL PERSONAJE
 
 	method mover(nuevaPosition){position = nuevaPosition.siguiente(position)}
@@ -27,202 +26,182 @@ object hector {
 
 	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
 
-	method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
+	//METODOS GENERICOS
+
+	//generica vacia cualquier lista
+	method vaciarLista(lista) {lista.clear()}
+
+	method ponerElemento(elemento) {
+	  
+	   elemento.posicionarElementoEn(self.position(),elemento)
+	}
+
+
+	//CUANDO APARECIO EL MERCADO TENGO QUE PREGUNTARLE A CADA ELEMENTO SI LO ES
+
+	method soyMercado() {return false}
 
 	//SEMBRAR
 
-    method sembrar(cultivo) {
+    method sembrar(_cultivo) {
+
+
+		//SI LA GRANJA NO TIENE UN ELEMENTO JUNTO CON HECTOR (SELF) ENTONCES ES PARCELA VACIA Y PUEDE SEMBRAR
+		if (not granja.tieneElementoAcaAdemasDe(self)) {
+		  
+			self.ponerElemento(_cultivo)
 		
-		self.ponerElemento(cultivo,"Sembrando ")
+			self.mensaje(self, "Sembrando " + _cultivo.nombreElemento())
 
-		self.cultivosSembrados().add(cultivo)	
+			self.cultivosSembrados().add(_cultivo)	
+
+		} else {
+
+
+			self.mensaje(self,"imposible sembrar aqui! parcela ocupada ")
+		}
 	}
-
 	
-	    //todos los metodos respondian al nombre de cultivo pero cuando se 
-		//agrego aspersor tuve que generalizar y cambiar a que hector agrega "elementos"
-
-
-	method ponerElemento(elemento,mensaje) {
-	  
-	   elemento.posicionarElementoEn(self.position())
-	
-	   game.addVisual(elemento) // Se agrega a modo de prueba
-	
-	   self.mensaje(self, mensaje + elemento.nombreElemento())
-	}
-
 
 	//REGAR
 
 	method regar() {  
 	
+		if (not granja.tieneElementoAcaAdemasDe(self)) {
+		  
 
-		self.validarEspacio("no puedo regar, parcela vacia")
+			self.mensaje(self,"no puedo regar aqui!, parcela vacia")		
 
-
-		//como al validar ya se que personaje y un cultivo estan en la misma
-		//parcela, con la funcion que le paso a regadio obtengo el cultivo que
-		//se encuentra en esa posicion
-
-
-		self.regadio(self.cultivoEnLaPosicion())
-	}
+		} else {
 
 
-	method validarEspacio(mensaje) {
-	  
-    	return if(not granja.hayElementoAca()) {
-		
-			//self.mensajeError(mensaje)
-			game.say(self,mensaje)
+			self.regadio(granja.elementoQueCompartePosicionCon(self))
 		}
 	}
 
 
 	//AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
 	
-	method regadio(cultivo) {
+	method regadio(_cultivo) {
 
 
-	  cultivo.madurar()
+	  _cultivo.madurar()
 
-	  self.mensaje(self,"Regando " + cultivo.nombreElemento())
-
+	  self.mensaje(self,"Regando " + _cultivo.nombreElemento())
 	}
 
-	method cultivoEnLaPosicion(){	
- 
-		//me consigo el cultivo que se encuentra en la misma posicion
-
-		return game.uniqueCollider(self)
-		
-
-		//OTRAS DIFERENTES FORMAS DE TRAERME EL CULTIVO QUE SE 
-		//ENCUENTRA EN LA MISMA POSICION
-
-		//return game.colliders(self.cultivosSembrados().get(1))
-	
-		//return game.colliders(self).first()
-	}
-
-	//COSECHAR
 
 	method cosechar() {
 		
-		self.validarEspacio("no puedo cosechar,parcela vacia")
+		return if (not granja.tieneElementoAcaAdemasDe(self)) {
 
-		if(self.puedeCosechar(self.cultivoEnLaPosicion()))
+			  
+			  self.mensaje(self,"no puedo cosechar aquí!,parcela vacia")		
+		
+		}
+		else if(self.puedeCosechar(granja.elementoQueCompartePosicionCon(self)))
 		{
 
-			self.agregarCultivoCosechado(self.cultivoEnLaPosicion())
-			
-			self.mensaje(self,"Coseche " 
-							+ self.nombreCultivoEnPosicion() + "! " +
-									 " Tocá la letra v para venderlo")
+			// return if(self.puedeCosechar(granja.elementoQueCompartePosicionCon(self)))
+			// {
 
-			self.sacarCultivoCosechado(self.cultivoEnLaPosicion())
-			
+				self.agregarCultivoCosechado(granja.elementoQueCompartePosicionCon(self))
+				
+				self.mensaje(self,"Coseche " 
+								+ self.nombreElementoEnLaPosicion() + "! " +
+										" Tocá la letra v para venderlo")
+
+				self.sacarCultivoCosechado(granja.elementoQueCompartePosicionCon(self))
+			//}
 		}
-		else{
+		else
+		{
 
-			self.mensaje(self,"este cultivo no es cosechable todavia!")
+			self.mensaje(self,"Este " + self.nombreElementoEnLaPosicion() + " no es cosechable todavia!")
+			
 		}
 	}
 
 
-	method nombreCultivoEnPosicion() {return self.cultivoEnLaPosicion().nombreElemento()}
+	method puedeCosechar(_cultivo) {return _cultivo.soyCosechable(_cultivo)}
 
+	method nombreElementoEnLaPosicion() {return granja.elementoQueCompartePosicionCon(self).nombreElemento()}
 
-	method agregarCultivoCosechado(cultivo){cultivosCosechados.add(cultivo)}
+	method agregarCultivoCosechado(_cultivo){cultivosCosechados.add(_cultivo)}
 
-
-	method sacarCultivoCosechado(cultivo) {game.removeVisual(cultivo)}
-
-
-	method puedeCosechar(cultivo) {return cultivo.soyCosechable(cultivo)}
+	method sacarCultivoCosechado(_cultivo) {game.removeVisual(_cultivo)}
 
 
 	
    //VENTA
 
-
 	method vender() {
 	  
-	  self.validarListaCosechados()
-	  
-	  self.validarPuntoDeVenta()
+		return if (not granja.tieneElementoAcaAdemasDe(self)) {
 
-	  self.sumarPreciosCultivos(self.cultivosCosechados())
-	 
-	  
+			self.mensaje(self,"no existe un mercado en la parcela")
 
-	  self.vaciarLista(self.cultivosCosechados())
+		} 
+		else if(self.cultivosCosechados().isEmpty())
+		{
 
-	  self.mensaje(self,"Todo vendido!")
-	 
+			self.mensaje(self,"no hay cultivos para vender")
+		
+		}
+		else if(granja.hayMercadoAca(self.position())) {
+
+
+			//AL HABERLO VALIDADO yo se que hay UN MERCADO COMPARTIENDO LUGAR CON
+			//HECTOR, ME TRAIGO AL MERCADO EN "elementoQueCompartePosicionCon"self
+
+			granja.elementoQueCompartePosicionCon(self).transaccion(self.cultivosCosechados(),self)	  
+
+			self.vaciarLista(self.cultivosCosechados())
+
+			self.mensaje(self,"Todo vendido!")
+		
+		}
+			  
 	}   
 
-	method validarListaCosechados() {
-	  
-	  if (self.cultivosCosechados().isEmpty()) {
-		
-			self.mensajeError("no hay cultivos para vender")
-	  }
-	}
 
-	method sumarPreciosCultivos(listaCosechados) {
-	  
-		//ACUMULAR RESULTA CLAVE ACÁ PORQUE CUANDO VACÍO LA LISTA Y QUIERO COSECHAR DE NUEVO, SI NO HUBIERA UN ACUMULADOR, LA NUEVA COSECHA PISARÍA EL ORO RECIBIDO DE LA COSECHA ANTERIOR
-
-		oroRecibido += listaCosechados.sum
-							({cultivo => self.precioCultivo(cultivo)})
-	}
-
-
-	method precioCultivo(cultivo) {return cultivo.precio()}
-
-
-	//generica vacia cualquier lista
-	method vaciarLista(lista) {lista.clear()}
-
-
+	method cobrar(dinero) {oroRecibido += dinero}
 
 	//ESTADO CONTABLE
 
 	method estadoContable() {
 	  
-	  self.mensaje(self, "tengo " + self.cantidadPlantas() + " para vender. " +
+	  self.mensaje(self, "tengo " + self.cantidadCultivosCosechados() + " para vender. " +
 	  		   " recaudacion por ventas: " + self.oroRecibido() + " monedas" )
 	}
 
-	method cantidadPlantas() {return self.cultivosCosechados().size()}
 
+	method cantidadCultivosCosechados() {return self.cultivosCosechados().size()}
+
+	
 	method oroRecibido() {return oroRecibido}
-
 
 
 	//BONUS ASPERSORES
 
 	method ponerAspersor(unAspersor) {
 
-		self.validarEspacioLleno("celda ocupada,no puedo poner aspersor")
-		
-		self.ponerElemento(unAspersor,"Coloqué ") 
-		
-		unAspersor.regar()
-	}
+		if (granja.tieneElementoAcaAdemasDe(self)) {
+		  
+			self.mensaje(self,"no puedo poner aspersor aquí!, celda ocupada")
 
-
-	method validarEspacioLleno(mensaje) {
-	  
-      return if(granja.hayElementoAca()) {
+		} else {
+		  
+			self.ponerElemento(unAspersor) 
 		
-		self.mensajeError(mensaje)
-	  }
+			self.mensaje(self, "Coloqué " + self.nombreElementoEnLaPosicion())
+
+											//unAspersor.nombreElemento()
+
+			unAspersor.regar()	
+		}
 	}
-	
 
 	//PROBAR PONIENDO EL MAIZ NO SOBRE HECTOR SINO AL LADO 
 	// method sembrar(cultivo) 

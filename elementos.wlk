@@ -13,9 +13,13 @@ class Maiz {
 	var property granja = farmVille  
 
 	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
-	method mensajeError(stringMensaje) {self.error(stringMensaje)}
+    method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
-	method posicionarElementoEn(nuevaPosicion) {self.position(nuevaPosicion)}
+	method posicionarElementoEn(nuevaPosicion,elemento) {
+		
+		self.position(nuevaPosicion)
+		game.addVisual(elemento) // Se agrega a modo de prueba	
+	}
 
 	method madurar() {image = "corn_adult.png"}
 
@@ -24,7 +28,9 @@ class Maiz {
 	method precio() {return 150}
 
 	//para respetar lo polimorfico
-	method validarEspacio(mensaje,posicion) { }
+	method validarPosicion(mensaje,posicion) { }
+
+    method soyMercado() {return false}
 
 }
 
@@ -38,9 +44,13 @@ class Trigo {
 	var property granja = farmVille  
 
 	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
-	method mensajeError(stringMensaje) {self.error(stringMensaje)}
+    method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
-	method posicionarElementoEn(nuevaPosicion) {self.position(nuevaPosicion)}
+	method posicionarElementoEn(nuevaPosicion,elemento) {
+		
+		self.position(nuevaPosicion)
+		game.addVisual(elemento) // Se agrega a modo de prueba	
+	}
 
 	method madurar() {
 		
@@ -82,9 +92,11 @@ class Trigo {
 		}
 	}
 
-
 	//para respetar lo polimorfico
-	method validarEspacio(mensaje,posicion) { }
+	method validarPosicion(mensaje,posicion) { }
+
+    method soyMercado() {return false}
+
 }
 
 
@@ -99,7 +111,11 @@ class Tomaco {
 	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
 	method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
-	method posicionarElementoEn(nuevaPosicion) {self.position(nuevaPosicion)}
+	method posicionarElementoEn(nuevaPosicion,elemento) {
+		
+		self.position(nuevaPosicion)
+		game.addVisual(elemento) // Se agrega a modo de prueba	
+	}
 
 	method madurar() {
 		
@@ -115,7 +131,7 @@ class Tomaco {
 			//tengo que validar antes que no haya un elemento arriba para 
 			//asi si poder mover el tomate (o sea regarlo)
 		    
-			self.validarEspacio("no me puedo mover,hay algo",game.at(position.x(),position.y() + 1))
+			self.validarPosicion("no me puedo mover hacia arriba,parcela ocupada.",game.at(position.x(),position.y() + 1))
 			
 			self.position(arriba.siguiente(self.position()))						
 		}
@@ -125,7 +141,7 @@ class Tomaco {
 	//ES EL TOMATE ACA QUIEN TIENE QUE PREGUNTARLE A LA GRANJA SI 
 	//ESTA OCUPADA LA CELDA DE ARRIBA SUYO
 
-	method validarEspacio(mensaje,posicion) {
+	method validarPosicion(mensaje,posicion) {
 	  
 	  const nuevaPosicion = posicion
 	  
@@ -138,6 +154,9 @@ class Tomaco {
 	method soyCosechable(cultivo) {return true}
 
 	method precio() {return 80}
+
+    method soyMercado() {return false}
+
 }
 
 class Aspersor {
@@ -151,13 +170,19 @@ class Aspersor {
   method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
   method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
-  method posicionarElementoEn(nuevaPosicion) {self.position(nuevaPosicion)}
+  method soyCosechable(cultivo) {return false}
+
+  method posicionarElementoEn(nuevaPosicion,elemento) {
+		
+		self.position(nuevaPosicion)
+		game.addVisual(elemento) // Se agrega a modo de prueba	
+  }
 	
   method regar() {
 
-     //game.onTick(3000,"riega celdas vecinas",{ self.moverAspersorAVecinas() })
-	
-     game.schedule(2000,{self.moverAspersorAVecinas()})
+
+     game.onTick(3000,"riega celdas vecinas",{self.moverAspersorAVecinas()})
+     //game.schedule(2000,{self.moverAspersorAVecinas()})
   }
 
 
@@ -198,10 +223,7 @@ class Aspersor {
     self.regadio(self.cultivoEnLaPosicion())
   }
 
-  method irAPosicion(nuevaPosicion) {
-	
-	position = nuevaPosicion
-  }
+  method irAPosicion(nuevaPosicion) {position = nuevaPosicion}
 
    //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
    method regadio(cultivo) {
@@ -225,27 +247,93 @@ class Aspersor {
 	}
 
 
-	method validarEspacio(mensaje,posicion) { }
+	method validarPosicion(mensaje,posicion) { }
+
+    method soyMercado() {return false}
 
 }
 
 class Mercado{
 
-	var monedasParaAbonar = 10000
+   var property position 
+   var property image = "market.png"
+   var property nombreElemento = "Mercado"
+   var property granja = farmVille  
 
-	method monedasParaAbonar() {return monedasParaAbonar}
+   const property cultivosComprados = [] 
 
-	var property mercaderia = []
+   method mensaje(visual,stringMensaje) {game.say(visual,   stringMensaje)}
+  
+   method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
-	method vender() {
-	  
-	  self.descontar(self.monedasParaAbonar())
+   var monedasParaAbonar = 1000
+
+   var pago = 0 
+
+   method soyCosechable(cultivo) {return false}
+
+   method monedasParaAbonar() {return monedasParaAbonar}
+
+   var property mercaderia = []
+
+   method transaccion(_cultivos,persona) {
+		
+		if (self.puedeComprarCultivos(self.sumarPreciosCultivos(_cultivos))) 
+		{
+		  
+			self.agregarTodosLosCultivos(_cultivos)
+			self.compra(_cultivos)	
+			self.pagarA(persona)
+
+		} else {
+		  
+			self.mensaje(self,"no tengo plata para comprar")
+		}
 	} 
 
-	method descontar(monedasParaAbonar) {
+	method pagarA(persona) {
+		
+		persona.cobrar(pago)
+		pago = 0	
+	}
+
+
+	method puedeComprarCultivos(monedasADescontar) {
 	  
-	  monedasParaAbonar = monedasParaAbonar - 
+	  return self.monedasParaAbonar() > monedasADescontar
+	}
+
+
+	method agregarTodosLosCultivos(_cultivos) {
+	  		
+	  _cultivos.forEach({unCultivo => self.agregarCultivo(unCultivo)})   
+	}
+
+	method agregarCultivo(_unCultivo) {cultivosComprados.add(_unCultivo)}
+
+
+	method compra(_cultivos) {
+	    
+		pago = self.sumarPreciosCultivos(_cultivos)
+		self.descontarPorCompra(self.sumarPreciosCultivos(_cultivos))
+	}
+
+	method descontarPorCompra(_dinero) {
+		
+	    monedasParaAbonar = monedasParaAbonar - _dinero
 	} 
 
-	method validarEspacio(mensaje,posicion) { }
+	method sumarPreciosCultivos(listaCosechados) {
+		
+		//ACUMULAR RESULTA CLAVE ACÁ PORQUE CUANDO VACÍO LA LISTA Y QUIERO COSECHAR DE NUEVO, SI NO HUBIERA UN ACUMULADOR, LA NUEVA COSECHA PISARÍA EL ORO RECIBIDO DE LA COSECHA ANTERIOR
+
+		return listaCosechados.sum({cultivo => self.precioCultivo(cultivo)})
+	}
+
+	method precioCultivo(cultivo) {return cultivo.precio()}
+
+	method validarPosicion(mensaje,posicion) { }
+
+    method soyMercado() {return true}
+
 }

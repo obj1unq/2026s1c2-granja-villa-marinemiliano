@@ -4,7 +4,6 @@ import personaje.*
 
 object farmVille{
 
-    var property granjero = hector
 
     const mapa = [
         [_, _, _, _, _, _, _, _, _, _ ],
@@ -54,13 +53,20 @@ object farmVille{
     method dentro(position) {
         return position.x().between(0, game.width() -1) and position.y().between(0, game.height() -1 )
     }
+
+    method soyMercado() {return false}
+
+    method hayMercadoAca(posicion) {
+      
+      return game.getObjectsIn(posicion).any({ o => o.soyMercado() })
+    }
+
     
-    
-    //esta evalua si hay un objeto en la celda donde tambien esta
-    //el granjero
-    method hayElementoAca() {
+    //esta evalua si hay un objeto en la celda donde tambien esta 
+    //el elemento pasado por parametro
+    method tieneElementoAcaAdemasDe(elemento) {
         
-        return not game.colliders(self.granjero()).isEmpty()
+        return not game.colliders(elemento).isEmpty()
         //return game.colliders(self.granjero()).size() > 0
         //return game.colliders(hector).size() > 0
     }
@@ -69,14 +75,26 @@ object farmVille{
     //esta va y evalua si en tal posicion hay algun objeto
     //la tuve que incorporar en el problema del tomate cuando
     //se riega y tiene que verificar si ya hay un cultivo arriba suyo
-    method hayElementoEnPosicion(nuevaPosicion) {
+    method hayElementoEnPosicion(_nuevaPosicion) {
     
-      return not game.getObjectsIn(nuevaPosicion).isEmpty()
+      return not game.getObjectsIn(_nuevaPosicion).isEmpty()
     }
 
 
+    method elementoQueCompartePosicionCon(_elemento){	
+ 
+		//me consigo el elemento que se encuentra en la misma posicion
 
+		return game.uniqueCollider(_elemento)
+		
 
+		//OTRAS DIFERENTES FORMAS DE TRAERME EL CULTIVO QUE SE 
+		//ENCUENTRA EN LA MISMA POSICION
+
+		//return game.colliders(self.cultivosSembrados().get(1))
+	
+		//return game.colliders(self).first()
+	}
 
 }
 
