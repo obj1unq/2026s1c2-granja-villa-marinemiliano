@@ -12,8 +12,18 @@ class Maiz {
 
 	var property granja = farmVille  
 
-	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
     method mensajeError(stringMensaje) {self.error(stringMensaje)}
+
+
+	//MENSAJES PARAMETRIZADOS   
+	const interprete = gameMock
+	
+	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+
+	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
+	
+	method mensajePersonaje() {return interprete.mensajePersonaje()}
+	
 
 	method posicionarElementoEn(nuevaPosicion,elemento) {
 		
@@ -23,7 +33,7 @@ class Maiz {
 
 	method madurar() {image = "corn_adult.png"}
 
-	method soyCosechable(cultivo) {return cultivo.image() ==  "corn_adult.png"}
+	method soyCosechable() {return self.image() ==  "corn_adult.png"}
 
 	method precio() {return 150}
 
@@ -31,6 +41,8 @@ class Maiz {
 	method validarPosicion(mensaje,posicion) { }
 
     method soyMercado() {return false}
+    
+	method soyCultivo() {return true}
 
 }
 
@@ -43,8 +55,18 @@ class Trigo {
 
 	var property granja = farmVille  
 
-	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
     method mensajeError(stringMensaje) {self.error(stringMensaje)}
+
+
+	//MENSAJES PARAMETRIZADOS
+    const interprete = gameMock
+	
+	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+
+	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
+	
+	method mensajePersonaje() {return interprete.mensajePersonaje()}
+	
 
 	method posicionarElementoEn(nuevaPosicion,elemento) {
 		
@@ -71,7 +93,7 @@ class Trigo {
 	  }
 	}
 	
-	method soyCosechable(cultivo) {return self.evolucion() >= 2}
+	method soyCosechable() {return self.evolucion() >= 2}
 
 	method precio() {
 
@@ -97,6 +119,7 @@ class Trigo {
 
     method soyMercado() {return false}
 
+	method soyCultivo() {return true}
 }
 
 
@@ -108,9 +131,20 @@ class Tomaco {
 
 	var property granja = farmVille  
 
-	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
 	method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
+	
+	//MENSAJES PARAMETRIZADOS
+
+	const interprete = gameMock
+		
+	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+
+	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
+
+
+	method mensajePersonaje() {return interprete.mensajePersonaje()}
+	
 	method posicionarElementoEn(nuevaPosicion,elemento) {
 		
 		self.position(nuevaPosicion)
@@ -123,8 +157,12 @@ class Tomaco {
 		  
 			//position = game.at(self.position().x(), 0)
 			self.position(game.at(self.position().x(),0) )
+						
+			self.hablar(self,"teletransportacion!")
 			
-			self.mensaje(self, "Teletransportacion!")
+			//OFICIA DE TRADUCTOR PARA LOS GLOBOS DE TEXTO EN LO_ TEST
+			self.globosDeTexto(self,"teletransportacion!")
+
 
 		} else {		  
 		
@@ -151,12 +189,13 @@ class Tomaco {
 	  }
 	}
 
-	method soyCosechable(cultivo) {return true}
+	method soyCosechable() {return true}
 
 	method precio() {return 80}
 
     method soyMercado() {return false}
 
+	method soyCultivo() {return true}
 }
 
 class Aspersor {
@@ -167,11 +206,22 @@ class Aspersor {
 
   var property granja = farmVille  
 
-  method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
   method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
-  method soyCosechable(cultivo) {return false}
+  
+  //MENSAJES PARAMETRIZADOS
 
+  const interprete = gameMock
+
+  method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+
+  method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
+
+  method mensajePersonaje() {return interprete.mensajePersonaje()}
+	
+
+  method soyCosechable() {return false}
+  
   method posicionarElementoEn(nuevaPosicion,elemento) {
 		
 		self.position(nuevaPosicion)
@@ -228,14 +278,16 @@ class Aspersor {
    //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
    method regadio(cultivo) {
 	  
-	  cultivo.madurar()
-	  self.mensaje(self,"Regando " + cultivo.nombreElemento())
-	}
+		cultivo.madurar()
+	
+		self.hablar(self,"regando... " + cultivo.no_mbreElemento())
+		self.globosDeTexto(self,"regando... " + cultivo.nombreElemento())
+   }
 
-
-	method cultivoEnLaPosicion(){
+   method cultivoEnLaPosicion(){
 		
-		//comprobe que tanto unique como colliders NO obtiene el objeto sino el visual, OJO ACA! 
+		// /method que tanto unique como colliders NO obtiene el objeto sino el visual, OJO ACA! 
+		
 		return game.uniqueCollider(self)
 		
 		//return game.colliders(self).first()
@@ -251,6 +303,7 @@ class Aspersor {
 
     method soyMercado() {return false}
 
+	method soyCultivo() {return false}
 }
 
 class Mercado{
@@ -262,15 +315,24 @@ class Mercado{
 
    const property cultivosComprados = [] 
 
-   method mensaje(visual,stringMensaje) {game.say(visual,   stringMensaje)}
-  
    method mensajeError(stringMensaje) {self.error(stringMensaje)}
 
-   var monedasParaAbonar = 1000
 
-   var pago = 0 
+   //MENSAJES PARAMETRIZADOS
 
-   method soyCosechable(cultivo) {return false}
+    const interprete = gameMock
+
+	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+
+	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
+
+	method mensajePersonaje() {return interprete.mensajePersonaje()}
+	
+    var monedasParaAbonar = 1000
+
+    var pago = 0 
+
+   method soyCosechable() {return false}
 
    method monedasParaAbonar() {return monedasParaAbonar}
 
@@ -287,7 +349,11 @@ class Mercado{
 
 		} else {
 		  
-			self.mensaje(self,"no tengo plata para comprar")
+		
+				self.hablar(self,"no tengo plata para comprar")
+
+				//PARA TEST	
+				self.globosDeTexto(self,"no tengo pla_a para comprar")
 		}
 	} 
 
@@ -336,4 +402,5 @@ class Mercado{
 
     method soyMercado() {return true}
 
+	method soyCultivo() {return false}
 }

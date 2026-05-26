@@ -4,7 +4,6 @@ import personaje.*
 
 object farmVille{
 
-
     const mapa = [
         [_, _, _, _, _, _, _, _, _, _ ],
         [_, _, _, _, _, _, _, _, _, _ ],
@@ -54,8 +53,12 @@ object farmVille{
         return position.x().between(0, game.width() -1) and position.y().between(0, game.height() -1 )
     }
 
+	method soyCultivo() {return false}
+
     method soyMercado() {return false}
 
+    method soyCosechable() {return false}
+    
     method hayMercadoAca(posicion) {
       
       return game.getObjectsIn(posicion).any({ o => o.soyMercado() })

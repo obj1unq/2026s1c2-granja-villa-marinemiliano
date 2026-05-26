@@ -3,6 +3,15 @@ import elementos.*
 import direcciones.*
 import granja.*
 
+object gameMock {
+	  
+	   var property mensajePersonaje = null
+
+	   method say(visual,mensaje) {
+		 
+		 mensajePersonaje = mensaje
+	   } 
+}
 
 
 object hector {
@@ -13,19 +22,24 @@ object hector {
 	
 	const property cultivosSembrados = []
 	const property cultivosCosechados = []
+	
+	const interprete = gameMock
 
 	//OJO PRECALCULO ACA. CREO QUE ASI ES CORRECTO
 	var oroRecibido = 0
 	
 	//MOVIMIENTO DEL PERSONAJE
-
 	method mover(nuevaPosition){position = nuevaPosition.siguiente(position)}
 
 
 	//MENSAJES PARAMETRIZADOS
 
-	method mensaje(visual,stringMensaje) {game.say(visual,stringMensaje)}
+	method hablar(visual,stringMensaje) {game.say(visual,stringMensaje)}
 
+	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
+
+	method mensajePersonaje() {return interprete.mensajePersonaje()}
+	
 
 	//METODOS GENERICOS
 
@@ -42,6 +56,10 @@ object hector {
 
 	method soyMercado() {return false}
 
+	method soyCultivo() {return false}
+
+	method soyCosechable() {return false}
+
 	//SEMBRAR
 
     method sembrar(_cultivo) {
@@ -52,33 +70,54 @@ object hector {
 		  
 			self.ponerElemento(_cultivo)
 		
-			self.mensaje(self, "Sembrando " + _cultivo.nombreElemento())
+			self.hablar(self, "sembrando... " + _cultivo.nombreElemento())
+			
+			//OFICIA DE TRADUCTOR PARA LOS GLOBOS DE TEXTO EN LOS TEST
+			self.globosDeTexto(self, "sembrando... " + _cultivo.nombreElemento())
 
 			self.cultivosSembrados().add(_cultivo)	
 
 		} else {
 
 
-			self.mensaje(self,"imposible sembrar aqui! parcela ocupada ")
+			self.hablar(self,"imposible sembrar aqui! parcela ocupada ")
+
+			//OFICIA DE TRADUCTOR PARA LOS GLOBOS DE TEXTO EN LOS TEST
+			self.globosDeTexto(self,"imposible sembrar aqui! parcela ocupada ")
 		}
 	}
-	
+
 
 	//REGAR
 
 	method regar() {  
 	
-		if (not granja.tieneElementoAcaAdemasDe(self)) {
+		return if (not granja.tieneElementoAcaAdemasDe(self) ) {
 		  
 
-			self.mensaje(self,"no puedo regar aqui!, parcela vacia")		
+			self.hablar(self,"imposible regar aqui!,parcela vacia")		
 
-		} else {
+			//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
+			self.globosDeTexto(self,"imposible regar aqui!,parcela vacia")
+
+		} 
+		else if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
 
 
 			self.regadio(granja.elementoQueCompartePosicionCon(self))
 		}
+		else {
+
+			self.hablar(self,"imposible regar aqui! esto no es un cultivo")
+			
+			//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
+			self.globosDeTexto(self,"imposible regar aqui! esto no es un cultivo")
+
+		}
 	}
+
+
+	method esCultivo(_elemento) {return _elemento.soyCultivo()}
 
 
 	//AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
@@ -88,7 +127,11 @@ object hector {
 
 	  _cultivo.madurar()
 
-	  self.mensaje(self,"Regando " + _cultivo.nombreElemento())
+	  self.hablar(self,"regando... " + _cultivo.nombreElemento())
+
+	  //PARA TEST 
+	  self.globosDeTexto(self,"regando... " + _cultivo.nombreElemento())
+
 	}
 
 
@@ -97,7 +140,7 @@ object hector {
 		return if (not granja.tieneElementoAcaAdemasDe(self)) {
 
 			  
-			  self.mensaje(self,"no puedo cosechar aquí!,parcela vacia")		
+			  self.hablar(self,"imposible cosechar aquí!,parcela vacía")		
 		
 		}
 		else if(self.puedeCosechar(granja.elementoQueCompartePosicionCon(self)))
@@ -108,9 +151,9 @@ object hector {
 
 				self.agregarCultivoCosechado(granja.elementoQueCompartePosicionCon(self))
 				
-				self.mensaje(self,"Coseche " 
+				self.hablar(self,"coseché! " 
 								+ self.nombreElementoEnLaPosicion() + "! " +
-										" Tocá la letra v para venderlo")
+										"ve al mercado, vendelo presionando la v")
 
 				self.sacarCultivoCosechado(granja.elementoQueCompartePosicionCon(self))
 			//}
@@ -118,13 +161,13 @@ object hector {
 		else
 		{
 
-			self.mensaje(self,"Este " + self.nombreElementoEnLaPosicion() + " no es cosechable todavia!")
+			self.hablar(self,"Este " + self.nombreElementoEnLaPosicion() + " no es cosechable! tenes que regar con la letra r")
 			
 		}
 	}
 
 
-	method puedeCosechar(_cultivo) {return _cultivo.soyCosechable(_cultivo)}
+	method puedeCosechar(_elemento) {return _elemento.soyCosechable()}
 
 	method nombreElementoEnLaPosicion() {return granja.elementoQueCompartePosicionCon(self).nombreElemento()}
 
@@ -140,26 +183,30 @@ object hector {
 	  
 		return if (not granja.tieneElementoAcaAdemasDe(self)) {
 
-			self.mensaje(self,"no existe un mercado en la parcela")
+			self.hablar(self,"imposible vender algo!,no existe mercado en la parcela")
 
 		} 
-		else if(self.cultivosCosechados().isEmpty())
-		{
-
-			self.mensaje(self,"no hay cultivos para vender")
-		
-		}
 		else if(granja.hayMercadoAca(self.position())) {
 
 
-			//AL HABERLO VALIDADO yo se que hay UN MERCADO COMPARTIENDO LUGAR CON
-			//HECTOR, ME TRAIGO AL MERCADO EN "elementoQueCompartePosicionCon"self
+		   if(self.cultivosCosechados().isEmpty())
+		   {
 
-			granja.elementoQueCompartePosicionCon(self).transaccion(self.cultivosCosechados(),self)	  
+			self.hablar(self,"imposible vender! granero vacío
+			tenes que cosechar")
+		
+		   }
+		   else
+		   {
+				//AL HABERLO VALIDADO yo se que hay UN MERCADO COMPARTIENDO LUGAR CON
+				//HECTOR, ME TRAIGO AL MERCADO EN "elementoQueCompartePosicionCon"self
 
-			self.vaciarLista(self.cultivosCosechados())
+				granja.elementoQueCompartePosicionCon(self).transaccion(self.cultivosCosechados(),self)	  
 
-			self.mensaje(self,"Todo vendido!")
+				self.vaciarLista(self.cultivosCosechados())
+
+				self.hablar(self,"Todo vendido!")
+		   }
 		
 		}
 			  
@@ -172,14 +219,13 @@ object hector {
 
 	method estadoContable() {
 	  
-	  self.mensaje(self, "tengo " + self.cantidadCultivosCosechados() + " para vender. " +
-	  		   " recaudacion por ventas: " + self.oroRecibido() + " monedas" )
+	  self.hablar(self, "tengo " + self.cantidadCultivosCosechados() + " para vender. " + " recaudacion por ventas: " + self.oroRecibido() + " monedas" )
 	}
 
 
 	method verSembrados() {
 	  
-	  self.mensaje(self, "tengo " + self.cantCultivosSembrados() + " cultivos para cosechar.")
+	  self.hablar(self, "tengo " + self.cantCultivosSembrados() + " cultivos para cosechar.")
 	}
 
 	method cantCultivosSembrados() {return self.cultivosSembrados().size()}
@@ -197,13 +243,13 @@ object hector {
 
 		if (granja.tieneElementoAcaAdemasDe(self)) {
 		  
-			self.mensaje(self,"no puedo poner aspersor aquí!, celda ocupada")
+			self.hablar(self,"imposible poner aspersor aquí!, celda ocupada")
 
 		} else {
 		  
 			self.ponerElemento(unAspersor) 
 		
-			self.mensaje(self, "Coloqué " + self.nombreElementoEnLaPosicion())
+			self.hablar(self, "colocando... " + self.nombreElementoEnLaPosicion())
 
 											//unAspersor.nombreElemento()
 

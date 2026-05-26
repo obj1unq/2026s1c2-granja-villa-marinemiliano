@@ -37,11 +37,9 @@ program farmville {
 	keyboard.space().onPressDo({hector.estadoContable()})
 	
 	keyboard.p().onPressDo({hector.verSembrados()})
-	
-
 
 	//uso la f porque la a ya esta ocupada
-	
+		
 	keyboard.f().onPressDo({hector.ponerAspersor(new Aspersor())})
 
 
