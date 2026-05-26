@@ -177,6 +177,14 @@ object hector {
 	}
 
 
+	method verSembrados() {
+	  
+	  self.mensaje(self, "tengo " + self.cantCultivosSembrados() + " cultivos para cosechar.")
+	}
+
+	method cantCultivosSembrados() {return self.cultivosSembrados().size()}
+
+
 	method cantidadCultivosCosechados() {return self.cultivosCosechados().size()}
 
 	

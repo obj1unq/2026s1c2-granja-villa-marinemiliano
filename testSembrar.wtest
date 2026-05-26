@@ -1,0 +1,137 @@
+import wollok.game.*
+import granja.*
+import personaje.*
+import direcciones.*
+import elementos.*
+
+
+describe "hector siembra los cultivos" {
+    
+   method initialize() {
+            
+        game.clear()
+        farmVille.dibujarMapa() 
+        hector.position(game.at(5,5))
+   }
+
+  test "hector se mueve hacia la derecha,siembra maiz. maiz y hector
+       terminan en una misma posicion" {
+
+     const maiz = new Maiz(image = "corn_baby.png")
+     hector.mover(derecha)
+     hector.sembrar(maiz)
+
+     assert.equals([maiz],hector.cultivosSembrados())
+     assert.equals(game.at(6,5),hector.position())
+     assert.equals(game.at(6,5),maiz.position())
+   }
+
+   test "hector se mueve hacia la izquierda,siembra trigo. trigo y hector
+       terminan en una misma posicion" {
+
+     const trigo = new Trigo(image = "wheat_0.png")
+     hector.mover(izquierda)
+     hector.sembrar(trigo)
+
+     assert.equals([trigo],hector.cultivosSembrados())
+     assert.equals(game.at(4,5),hector.position())
+     assert.equals(game.at(4,5),trigo.position())
+   }
+
+   test "hector se mueve hacia la abajo,siembra tomaco. tomaco y hector
+       terminan en una misma posicion" {
+
+     const tomaco = new Tomaco(image = "tomaco.png")
+     hector.mover(abajo)
+     hector.sembrar(tomaco)
+
+     assert.equals([tomaco],hector.cultivosSembrados())
+     assert.equals(game.at(5,4),hector.position())
+     assert.equals(game.at(5,4),tomaco.position())
+   }
+
+   test "probar las tres acciones en un mismo test, hector tiene
+        entonces los tres cultivos sembrados en su coleccion con los 
+        cultivos en las respectivas posiciones sembradas" {
+      
+     hector.position(game.at(5,5))
+
+     const maiz = new Maiz(image = "corn_baby.png")
+     hector.mover(derecha)
+     hector.sembrar(maiz)
+
+     assert.equals([maiz],hector.cultivosSembrados())
+     assert.equals(game.at(6,5),hector.position())
+     assert.equals(game.at(6,5),maiz.position())
+
+    hector.position(game.at(5,5))
+
+     const trigo = new Trigo(image = "wheat_0.png")
+     hector.mover(izquierda)
+     hector.sembrar(trigo)
+
+     assert.equals([maiz,trigo],hector.cultivosSembrados())
+     assert.equals(game.at(4,5),hector.position())
+     assert.equals(game.at(4,5),trigo.position())
+
+     hector.position(game.at(5,5))
+
+     const tomaco = new Tomaco(image = "tomaco.png")
+     hector.mover(abajo)
+     hector.sembrar(tomaco)
+
+     assert.equals([maiz,trigo,tomaco],hector.cultivosSembrados())
+     assert.equals(game.at(5,4),hector.position())
+     assert.equals(game.at(5,4),tomaco.position())
+   }
+
+}
+
+
+describe "test sobre cultivos en lugares donde no se puede sembrar" {
+
+  method initialize() {
+            
+        game.clear()
+        farmVille.dibujarMapa() 
+   }
+
+  test "se quiere colocar cultivos donde hay un mercado y no se 
+        puede por parcela ocupada" {
+    
+    hector.position(game.at(5,5))
+    game.addVisualCharacter(hector)
+    const mercadoDos = new Mercado(position = game.at(5,6))
+    game.addVisual(mercadoDos)
+
+    const trigo = new Trigo(image = "wheat_0.png")
+
+    hector.mover(arriba)
+
+    hector.sembrar(trigo)
+
+    assert.equals(0,hector.cantCultivosSembrados())
+    assert.equals([],hector.cultivosSembrados())
+
+  }
+
+
+  test "se quiere colocar cultivos donde hay un cultivo y no se 
+        puede por parcela ocupada" {
+    
+    hector.position(game.at(5,5))
+    const trigo = new Trigo(image = "wheat_0.png")
+    const maiz = new Maiz(image = "corn_baby.png")
+
+    hector.mover(arriba)
+    hector.sembrar(trigo)
+
+    assert.equals(1,hector.cantCultivosSembrados())
+
+    hector.sembrar(maiz)
+
+    //PROBE LA OTRA FORMA DE RECONOCER EL OBJETO EN LISTA
+    assert.equals([trigo],hector.cultivosSembrados())
+
+  }
+}

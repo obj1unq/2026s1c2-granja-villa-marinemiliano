@@ -1,0 +1,42 @@
+import wollok.game.*
+import granja.*
+import personaje.*
+import direcciones.*
+import elementos.*
+
+
+describe "movimientos Personaje" {
+    
+   method initialize() {
+            
+        game.clear()
+        farmVille.dibujarMapa() 
+
+        hector.position(game.at(5,5))
+   }
+
+  test "hector se mueve hacia arriba" {
+
+     hector.mover(arriba)
+     assert.equals(game.at(5,6),hector.position())
+   }
+
+   test "hector se mueve hacia abajo" {
+
+     hector.mover(abajo)
+     assert.equals(game.at(5,4),hector.position())
+   }
+
+   test "hector se mueve hacia izquierda" {
+
+     hector.mover(izquierda)
+     assert.equals(game.at(4,5),hector.position())
+   }
+
+   test "hector se mueve hacia derecha" {
+
+     hector.mover(derecha)
+     assert.equals(game.at(6,5),hector.position())
+   }
+
+}
