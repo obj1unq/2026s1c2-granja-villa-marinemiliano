@@ -41,9 +41,15 @@ program farmville {
 	
 	keyboard.p().onPressDo({hector.verSembrados()})
 
-	//uso la f porque la a ya esta ocupada
-		
+
 	keyboard.f().onPressDo({hector.ponerAspersor(new Aspersor())})
+
+	//uso la f porque la a ya esta ocupada
+
+
+
+	// const asper = new Aspersor()
+	// keyboard.f().onPressDo({asper.correrSistemaDeRiego() })
 
 
  	//  COMIENZA

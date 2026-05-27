@@ -9,9 +9,9 @@ object gameMock {
 	  
 	   var property mensajePersonaje = null
 
-	   method say(visual,mensaje) {
+	   method say(_visual,_mensaje) {
 		 
-		 mensajePersonaje = mensaje
+		 mensajePersonaje = _mensaje
 	   } 
 }
 
@@ -31,12 +31,12 @@ object hector {
 	var oroRecibido = 0
 	
 	//MOVIMIENTO DEL PERSONAJE
-	method mover(nuevaPosition){position = nuevaPosition.siguiente(position)}
+	method mover(_nuevaPosition){position = _nuevaPosition.siguiente(position)}
 
 
 	//MENSAJES PARAMETRIZADOS
 
-	method hablar(visual,stringMensaje) {game.say(visual,stringMensaje)}
+	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
 
 	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
 
@@ -46,22 +46,22 @@ object hector {
 	//METODOS GENERICOS
 
 	//generica vacia cualquier lista
-	method vaciarLista(lista) {lista.clear()}
+	method vaciarLista(_lista) {_lista.clear()}
 
-	method ponerElemento(elemento) {
+	method ponerElemento(_elemento) {
 	  
-	   elemento.posicionarElementoEn(self.position(),elemento)
+	   _elemento.posicionarElementoEn(self.position(),_elemento)
 	}
 
 
 	//CUANDO APARECIO EL MERCADO TENGO QUE PREGUNTARLE A CADA ELEMENTO SI LO ES
 
-	method soyMercado() {return false}
+	method esCultivo() {return false}
 
-	method soyCultivo() {return false}
+    method soyMercado() {return false}
 
-	method soyCosechable() {return false}
-
+    method soyCosechable() {return false}
+    
 	//SEMBRAR
 
     method sembrar(_cultivo) {
@@ -103,7 +103,7 @@ object hector {
 			self.globosDeTexto(self,"imposible regar aqui!,parcela vacia")
 
 		} 
-		else if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
+	else if(granja.elementoQueCompartePosicionCon(self).esCultivo()) {
 
 
 			self.regadio(granja.elementoQueCompartePosicionCon(self))
@@ -118,8 +118,6 @@ object hector {
 		}
 	}
 
-
-	method esCultivo(_elemento) {return _elemento.soyCultivo()}
 
 
 	//AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
@@ -140,8 +138,7 @@ object hector {
 	method cosechar() {
 		
 		return if (not granja.tieneElementoAcaAdemasDe(self)) {
-
-			  
+		  
 		  self.hablar(self,"imposible cosechar aquí!,parcela vacía")
 
 		  //MENSAJE PARA TEST, OFICIA COMO INTERPRETE
@@ -230,7 +227,7 @@ object hector {
 	}   
 
 
-	method cobrar(dinero) {oroRecibido += dinero}
+	method cobrar(_dinero) {oroRecibido += _dinero}
 
 	//ESTADO CONTABLE
 
@@ -261,7 +258,7 @@ object hector {
 
 	//BONUS ASPERSORES
 
-	method ponerAspersor(unAspersor) {
+	method ponerAspersor(_unAspersor) {
 
 		if (granja.tieneElementoAcaAdemasDe(self)) {
 		  
@@ -271,7 +268,7 @@ object hector {
 
 		} else {
 		  
-			self.ponerElemento(unAspersor) 
+			self.ponerElemento(_unAspersor) 
 		
 			self.hablar(self, "colocando... " + self.nombreElementoEnLaPosicion())
 
@@ -279,7 +276,7 @@ object hector {
 
 			self.globosDeTexto(self, "colocando... " + self.nombreElementoEnLaPosicion())
 
-			unAspersor.correrSistemaDeRiego()	
+			_unAspersor.correrSistemaDeRiego()	
 		}
 	}
 

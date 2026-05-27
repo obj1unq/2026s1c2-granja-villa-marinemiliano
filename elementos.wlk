@@ -12,41 +12,40 @@ class Maiz {
 
 	var property granja = farmVille  
 
-    method mensajeError(stringMensaje) {self.error(stringMensaje)}
+    method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
 
 
 	//MENSAJES PARAMETRIZADOS   
 	const interprete = gameMock
 	
-	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
 
 	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
 	
 	method mensajePersonaje() {return interprete.mensajePersonaje()}
 	
 
-	method posicionarElementoEn(nuevaPosicion,elemento) {
+	method posicionarElementoEn(_nuevaPosicion,_elemento) {
 		
-		self.position(nuevaPosicion)
-		game.addVisual(elemento) // Se agrega a modo de prueba	
+		self.position(_nuevaPosicion)
+		game.addVisual(_elemento) // Se agrega a modo de prueba	
 	}
 
 	method madurar() {image = "corn_adult.png"}
 
-	method soyCosechable() {return self.image() ==  "corn_adult.png"}
-
 	method precio() {return 150}
 
+	method soyCosechable() {return self.image() ==  "corn_adult.png"}
 
 	method soyMercado() {return false}
     
-	method soyCultivo() {return true}
+	method esCultivo() {return true}
 
 
 	//LOS COLOQUE PARA RESPETAR OBJETOS POLIMORFICOS
-	method esCultivo(_elemento) {return _elemento.soyCultivo()}
+	
 
-	method validarPosicion(mensaje,posicion) { }
+	method validarPosicion(_mensaje,_posicion) { }
 }
 
 class Trigo {
@@ -58,23 +57,23 @@ class Trigo {
 
 	var property granja = farmVille  
 
-    method mensajeError(stringMensaje) {self.error(stringMensaje)}
+    method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
 
 
 	//MENSAJES PARAMETRIZADOS
     const interprete = gameMock
 	
-	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
 
 	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
 	
 	method mensajePersonaje() {return interprete.mensajePersonaje()}
 	
 
-	method posicionarElementoEn(nuevaPosicion,elemento) {
+	method posicionarElementoEn(_nuevaPosicion,_elemento) {
 		
-		self.position(nuevaPosicion)
-		game.addVisual(elemento) // Se agrega a modo de prueba	
+		self.position(_nuevaPosicion)
+		game.addVisual(_elemento) // Se agrega a modo de prueba	
 	}
 
 	method madurar() {
@@ -84,19 +83,20 @@ class Trigo {
 		image = "wheat_" + self.evolucion() + ".png"
 	}
 
-	method estadoActual(numero) {
+	method estadoActual(_numero) {
 	  
-	  return if (numero <= 3) {
+	  return if (_numero <= 3) {
 		
-			numero
+			_numero
 
 	  } else {
 					
+
+			//LA CUENTA CHETA DARIA CERO 		
 		 	0
 	  }
 	}
 	
-	method soyCosechable() {return self.evolucion() >= 2}
 
 	method precio() {
 
@@ -119,12 +119,13 @@ class Trigo {
 
 	//para respetar lo polimorfico
 	method validarPosicion(mensaje,posicion) { }
+	
+	method soyCosechable() {return self.evolucion() >= 2}
 
-	method esCultivo(_elemento) {return _elemento.soyCultivo()}
+	method esCultivo() {return true}
 
     method soyMercado() {return false}
 
-	method soyCultivo() {return true}
 }
 
 
@@ -136,24 +137,24 @@ class Tomaco {
 
 	var property granja = farmVille  
 
-	method mensajeError(stringMensaje) {self.error(stringMensaje)}
+	method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
 
 	
 	//MENSAJES PARAMETRIZADOS
 
 	const interprete = gameMock
 		
-	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
 
 	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
 
 
 	method mensajePersonaje() {return interprete.mensajePersonaje()}
 	
-	method posicionarElementoEn(nuevaPosicion,elemento) {
+	method posicionarElementoEn(_nuevaPosicion,_elemento) {
 		
-		self.position(nuevaPosicion)
-		game.addVisual(elemento) // Se agrega a modo de prueba	
+		self.position(_nuevaPosicion)
+		game.addVisual(_elemento) // Se agrega a modo de prueba	
 	}
 
 	method madurar() {
@@ -185,13 +186,13 @@ class Tomaco {
 
 	//ES EL TOMATE ACA QUIEN TIENE QUE PREGUNTARLE A LA GRANJA SI 
 	//ESTA OCUPADA LA CELDA DE ARRIBA SUYO
-	method validarPosicion(mensaje,posicion) {
+	method validarPosicion(_mensaje,_posicion) {
 	  
-	  const nuevaPosicion = posicion
+	  const nuevaPosicion = _posicion
 	  
-      return if(granja.hayElementoEnPosicion(nuevaPosicion)) {
+      return if(granja.hayElementoEnPosicion(_posicion)) {
 		
-		  self.mensajeError(mensaje)
+		  self.mensajeError(_mensaje)
 	  }
 	}
 
@@ -200,12 +201,13 @@ class Tomaco {
 	
 	method soyCosechable() {return true}
 
-	method esCultivo(_elemento) {return _elemento.soyCultivo()}
-
     method soyMercado() {return false}
 
-	method soyCultivo() {return true}
+	method esCultivo() {return true}
 }
+
+
+
 
 class Aspersor {
   
@@ -215,89 +217,75 @@ class Aspersor {
 
   var property granja = farmVille  
 
-  method mensajeError(stringMensaje) {self.error(stringMensaje)}
+  method mensaje(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
+  method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
 
-  
-  //MENSAJES PARAMETRIZADOS
-
-  const interprete = gameMock
-
-  method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
-
-  method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
-
-  method mensajePersonaje() {return interprete.mensajePersonaje()}
+  method posicionarElementoEn(_nuevaPosicion,_elemento) {
 	
-
-  method soyCosechable() {return false}
-  
-  method posicionarElementoEn(nuevaPosicion,elemento) {
-		
-		self.position(nuevaPosicion)
-		game.addVisual(elemento) // Se agrega a modo de prueba	
-  }
+	self.irAPosicion(_nuevaPosicion)
+	
+	//self.position(_nuevaPosicion)
+	//position = _nuevaPosicion	//self.irAPosicion(_nuevaPosicion)
+ 	game.addVisual(_elemento) // Se agrega a modo de prueba	
+   	
+	}
 	
   method correrSistemaDeRiego() {
 
-
-     game.onTick(3000,"riega celdas vecinas",{self.moverAspersorAVecinas()})
+     game.onTick(3000,"riega celdas vecinas",{ self.moverAspersorAVecinas() })
+	
      //game.schedule(2000,{self.moverAspersorAVecinas()})
   }
 
 
   method moverAspersorAVecinas(){
 	
-				//ES EL QUE AGREGUE EN PONER ELEMENTO EN EL OBJETO PERSONAJE 
-						 
-	const posicionOriginal = self.position()
+	self.regarHacia(game.at(position.x() + 1,position.y()))
+	self.irAPosicion(game.at(position.x() - 1,position.y()))
 
-	self.regarHacia(game.at(posicionOriginal.x() + 1,posicionOriginal.y()))
+	self.regarHacia(game.at(position.x() - 1,position.y()))
+	self.irAPosicion(game.at(position.x() + 1,position.y()))
+
+	self.regarHacia(game.at(position.x(),position.y() + 1))
+	self.irAPosicion(game.at(position.x(),position.y() - 1))
+
+	self.regarHacia(game.at(position.x(),position.y()-1))
+	self.irAPosicion(game.at(position.x(),position.y() + 1))
+
+	//DIAGONALES
+
+	self.regarHacia(game.at(position.x() + 1,position.y() - 1))
+	self.irAPosicion(game.at(position.x()- 1,position.y() + 1))
 	
-	//VUELVE A SU POSICION ORIGINAL PARA MANTENER SU EJE
-	self.irAPosicion(posicionOriginal)
-
-	// self.regarHacia(game.at(position.x() - 1,position.y()))
-	// self.irAPosicion(game.at(position.x() + 1,position.y()))
-
-	// self.regarHacia(game.at(position.x(),position.y() + 1))
-	// self.irAPosicion(game.at(position.x(),position.y() - 1))
-
-	// self.regarHacia(game.at(position.x(),position.y()-1))
-	// self.irAPosicion(game.at(position.x(),position.y() + 1))
-
-	// //DIAGONALES
-
-	// self.regarHacia(game.at(position.x() + 1,position.y() - 1))
-	// self.irAPosicion(game.at(position.x()- 1,position.y() + 1))
+	self.regarHacia(game.at(position.x() + 1,position.y() + 1))
+	self.irAPosicion(game.at(position.x()- 1,position.y() - 1))
 	
-	// self.regarHacia(game.at(position.x() + 1,position.y() + 1))
-	// self.irAPosicion(game.at(position.x()- 1,position.y() - 1))
+	self.regarHacia(game.at(position.x() - 1,position.y() - 1))
+	self.irAPosicion(game.at(position.x()+ 1,position.y() + 1))
 	
-	// self.regarHacia(game.at(position.x() - 1,position.y() - 1))
-	// self.irAPosicion(game.at(position.x()+ 1,position.y() + 1))
-	
-	// self.regarHacia(game.at(position.x() - 1,position.y() + 1))
-	// self.irAPosicion(game.at(position.x()+ 1,position.y() - 1))
+	self.regarHacia(game.at(position.x() - 1,position.y() + 1))
+	self.irAPosicion(game.at(position.x()+ 1,position.y() - 1))
   }
-
-  method irAPosicion(nuevaPosicion) {position = nuevaPosicion}
 
 					//direccion
-  method regarHacia(nuevaPosicion) {
+  method regarHacia(_nuevaPosicion) {
 
-	self.irAPosicion(nuevaPosicion)
+	self.irAPosicion(_nuevaPosicion)
 
-    //position = direccion.siguiente(self.position())
-	self.regar()
+	//position = _nuevaPosicion
+
+    self.regadio(self.cultivoEnLaPosicion())
   }
 
-  method regar() {  
+    method regar() {  
 	
-		return if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
+		return if(granja.elementoQueCompartePosicionCon(self).esCultivo()) {
 
 
 		 	self.regadio(granja.elementoQueCompartePosicionCon(self))
 		}
+		else
+		{}
 
 		// return if (not granja.tieneElementoAcaAdemasDe(self) ) {
 		  
@@ -320,28 +308,207 @@ class Aspersor {
 		// 	//self.globosDeTexto(self,"imposible regar aqui! esto no es un cultivo")
 
 		// }
+
 	}
 
-	method esCultivo(_elemento) {return _elemento.soyCultivo()}
 
+  	method irAPosicion(_nuevaPosicion) {
+	
+		position = _nuevaPosicion
+  	}
 
    //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
    method regadio(_cultivo) {
 	  
-		_cultivo.madurar()
-	
-		self.hablar(self,"regando... " + _cultivo.no_mbreElemento())
+	  _cultivo.madurar()
+	  self.mensaje(self,"Regando " + _cultivo.nombreElemento())
+	}
+
+
+	method cultivoEnLaPosicion(){
 		
-		self.globosDeTexto(self,"regando... " + _cultivo.nombreElemento())
-   }
+		//comprobe que tanto unique como colliders NO obtiene el objeto sino el visual, OJO ACA! 
+		return game.uniqueCollider(self)
+		
+		//return game.colliders(self).first()
+		
+		//OTRAS DIFERENTES FORMAS DE TRAERME EL CULTIVO QUE SE 
+		//ENCUENTRA EN LA MISMA POSICION
 
-	method validarPosicion(mensaje,posicion) { }
+		//return game.colliders(self.cultivosSembrados().get(1))
+	}
 
-    method soyMercado() {return false}
 
-	method soyCultivo() {return false}
+	method validarEspacio(_mensaje,_posicion) {
+	  
+	  const _nuevaPosicion = _posicion
+	  
+      return if(granja.hayElementoEnPosicion(_nuevaPosicion)) {
+		
+		self.mensajeError(_mensaje)
+	  }
+	}
 
+	method esCultivo() {return false}
+
+	method soyCosechable() {return false}
+	
+    method soyMercado() {return true}
 }
+
+
+
+
+// class Aspersor {
+  
+//   var property position = game.center() 
+//   var property image = "aspersor.png"
+//   var property nombreElemento = "Aspersor"
+
+//   var property granja = farmVille  
+
+//   method mensajeError(stringMensaje) {self.error(stringMensaje)}
+
+  
+//   //MENSAJES PARAMETRIZADOS
+
+//   const interprete = gameMock
+
+//   method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+
+//   method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
+
+//   method mensajePersonaje() {return interprete.mensajePersonaje()}
+	
+  
+//   method posicionarElementoEn(nuevaPosicion,elemento) {
+
+// 		position = nuevaPosicion
+// 		//self.irAPosicion(nuevaPosicion)
+// 		game.addVisual(elemento) // Se agrega a modo de prueba	
+//   }
+	
+//   method correrSistemaDeRiego() {
+
+// 	 //self.moverAspersorAVecinas()
+//     const posicionOriginal = self.position()
+
+// 	 game.onTick(1000,"riega celdas vecinas",{self.irAPosicion(game.at(position.x() + 1,position.y()))})
+
+// 	 //self.regadio(granja.elementoQueCompartePosicionCon(self))
+     
+// 	 game.onTick(1000,"riega celdas vecinas",{self.irAPosicion(posicionOriginal)})
+     
+// 	 //game.schedule(2000,{self.moverAspersorAVecinas()})
+
+//   }
+
+
+//   method moverAspersorAVecinas(){
+	
+// 				//ES EL QUE AGREGUE EN PONER ELEMENTO EN EL OBJETO PERSONAJE 
+						 
+// 	const posicionOriginal = self.position()
+
+// 	self.irAPosicion(game.at(posicionOriginal.x() + 1,posicionOriginal.y()))
+	
+// 	//self.irAPosicion(game.at(position.x() + 1,position.y() ) )
+
+// 	self.regadio(granja.elementoQueCompartePosicionCon(self))
+	
+// 	//VUELVE A SU POSICION ORIGINAL PARA MANTENER SU EJE
+// 	//self.irAPosicion(game.at(position.x(), position.y()))
+	
+// 	self.irAPosicion(posicionOriginal)
+
+
+// 	//  self.regarHacia(game.at(position.x() + 1,position.y()))
+// 	//  self.irAPosicion(game.at(position.x() - 1,position.y()))
+
+
+// 	// self.regarHacia(game.at(position.x() - 1,position.y()))
+// 	// self.irAPosicion(game.at(position.x() + 1,position.y()))
+
+// 	// self.regarHacia(game.at(position.x(),position.y() + 1))
+// 	// self.irAPosicion(game.at(position.x(),position.y() - 1))
+
+// 	// self.regarHacia(game.at(position.x(),position.y()-1))
+// 	// self.irAPosicion(game.at(position.x(),position.y() + 1))
+
+// 	// //DIAGONALES
+
+// 	// self.regarHacia(game.at(position.x() + 1,position.y() - 1))
+// 	// self.irAPosicion(game.at(position.x()- 1,position.y() + 1))
+	
+// 	// self.regarHacia(game.at(position.x() + 1,position.y() + 1))
+// 	// self.irAPosicion(game.at(position.x()- 1,position.y() - 1))
+	
+// 	// self.regarHacia(game.at(position.x() - 1,position.y() - 1))
+// 	// self.irAPosicion(game.at(position.x()+ 1,position.y() + 1))
+	
+// 	// self.regarHacia(game.at(position.x() - 1,position.y() + 1))
+// 	// self.irAPosicion(game.at(position.x()+ 1,position.y() - 1))
+
+//   }
+
+//   //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
+//    method regadio(cultivo) {
+	  
+// 	  cultivo.madurar()
+  
+// 	}
+
+
+//    method irAPosicion(nuevaPosicion) {
+	
+// 	position = nuevaPosicion}
+
+// 					//direccion
+
+//   method regarHacia(nuevaPosicion) {
+
+// 	self.irAPosicion(nuevaPosicion)
+
+// 	self.regadio(granja.elementoQueCompartePosicionCon(self))
+
+//   }
+
+//   method regar() {  
+	
+
+// 		self.regadio(granja.elementoQueCompartePosicionCon(self))
+
+// 		// return if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
+
+
+// 		//  	self.regadio(granja.elementoQueCompartePosicionCon(self))
+// 		// }
+
+// 		// return if (not granja.tieneElementoAcaAdemasDe(self) ) {
+		  
+// 		// 	//self.hablar(self,"imposible regar aqui!,parcela vacia")		
+
+// 		// 	//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
+// 		// 	//self.globosDeTexto(self,"imposible regar aqui!,parcela vacia")
+
+// 		// } 
+// 		// else if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
+
+
+// 		// 	self.regadio(granja.elementoQueCompartePosicionCon(self))
+// 		// }
+// 		// else {
+
+// 		// 	//self.hablar(self,"imposible regar aqui! esto no es un cultivo")
+			
+// 		// 	//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
+// 		// 	//self.globosDeTexto(self,"imposible regar aqui! esto no es un cultivo")
+
+// 		// }
+// 	}
+
+
+// }
 
 class Mercado{
 
@@ -352,14 +519,14 @@ class Mercado{
 
    const property cultivosComprados = [] 
 
-   method mensajeError(stringMensaje) {self.error(stringMensaje)}
+   method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
 
 
    //MENSAJES PARAMETRIZADOS
 
     const interprete = gameMock
 
-	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
 
 	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
 
@@ -369,18 +536,16 @@ class Mercado{
 
     var pago = 0 
 
-   method soyCosechable() {return false}
-
    var property mercaderia = []
 
-   method transaccion(_cultivos,persona) {
+   method transaccion(_cultivos,_persona) {
 		
 		if (self.puedeComprarCultivos(self.sumarPreciosCultivos(_cultivos))) 
 		{
 		  
 			self.agregarTodosLosCultivos(_cultivos)
 			self.compra(_cultivos)	
-			self.pagarA(persona)
+			self.pagarA(_persona)
 
 		} else {
 		  
@@ -393,24 +558,24 @@ class Mercado{
 		}
 	} 
 
-	method pagarA(persona) {
+	method pagarA(_persona) {
 		
-		persona.cobrar(pago)
+		_persona.cobrar(pago)
 		
 		//LO REINICIO PARA UNA FUTURA TRANSACCION 
 		pago = 0	
 	}
 
 
-	method puedeComprarCultivos(monedasADescontar) {
+	method puedeComprarCultivos(_monedasADescontar) {
 	  
-	  return self.monedasParaAbonar() > monedasADescontar
+	  return self.monedasParaAbonar() > _monedasADescontar
 	}
 
 
 	method agregarTodosLosCultivos(_cultivos) {
 	  		
-	  _cultivos.forEach({unCultivo => self.agregarCultivo(unCultivo)})   
+	  _cultivos.forEach({_unCultivo => self.agregarCultivo(_unCultivo)})   
 	}
 
 	method agregarCultivo(_unCultivo) {cultivosComprados.add(_unCultivo)}
@@ -427,18 +592,20 @@ class Mercado{
 	    monedasParaAbonar = monedasParaAbonar - _dinero
 	} 
 
-	method sumarPreciosCultivos(listaCosechados) {
+	method sumarPreciosCultivos(_listaCosechados) {
 		
 		//ACUMULAR RESULTA CLAVE ACÁ PORQUE CUANDO VACÍO LA LISTA Y QUIERO COSECHAR DE NUEVO, SI NO HUBIERA UN ACUMULADOR, LA NUEVA COSECHA PISARÍA EL ORO RECIBIDO DE LA COSECHA ANTERIOR
 
-		return listaCosechados.sum({cultivo => self.precioCultivo(cultivo)})
+		return _listaCosechados.sum({_cultivo => self.precioCultivo(_cultivo)})
 	}
 
-	method precioCultivo(cultivo) {return cultivo.precio()}
+	method precioCultivo(_cultivo) {return _cultivo.precio()}
 
-	method validarPosicion(mensaje,posicion) { }
+	method validarPosicion(_mensaje,_posicion) { }
+
+	method soyCosechable() {return false}
 
     method soyMercado() {return true}
 
-	method soyCultivo() {return false}
+	method esCultivo() {return false}
 }

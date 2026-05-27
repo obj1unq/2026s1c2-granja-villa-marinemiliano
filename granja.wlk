@@ -8,7 +8,7 @@ object farmVille{
     //MENSAJES PARAMETRIZADOS   
 	const interprete = gameMock
 	
-	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
 
 	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
 	
@@ -54,35 +54,34 @@ object farmVille{
         dibujante.dibujar(game.at(x,y))
     }
 
-    method validarDentro(position) {
-        if (not self.dentro(position)) {
-            self.error(position.toString() + " no está dentro del tablero ")
+    method validarDentro(_position) {
+        if (not self.dentro(_position)) {
+            self.error(_position.toString() + " no está dentro del tablero ")
         }
     }
 
-    method dentro(position) {
-        return position.x().between(0, game.width() -1) and position.y().between(0, game.height() -1 )
+    method dentro(_position) {
+        return _position.x().between(0, game.width() -1) and _position.y().between(0, game.height() -1 )
     }
 
-    method esCultivo(_elemento) {return _elemento.soyCultivo()}
-
-	method soyCultivo() {return false}
+	method esCultivo() {return false}
 
     method soyMercado() {return false}
 
     method soyCosechable() {return false}
     
-    method hayMercadoAca(posicion) {
+
+    method hayMercadoAca(_posicion) {
       
-      return game.getObjectsIn(posicion).any({ o => o.soyMercado() })
+      return game.getObjectsIn(_posicion).any({ o => o.soyMercado() })
     }
 
     
     //esta evalua si hay un objeto en la celda donde tambien esta 
     //el elemento pasado por parametro
-    method tieneElementoAcaAdemasDe(elemento) {
+    method tieneElementoAcaAdemasDe(_elemento) {
         
-        return not game.colliders(elemento).isEmpty()
+        return not game.colliders(_elemento).isEmpty()
         //return game.colliders(self.granjero()).size() > 0
         //return game.colliders(hector).size() > 0
     }
