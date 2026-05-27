@@ -150,6 +150,67 @@ describe "hector riega los cultivos" {
         
         assert.equals(game.at(5,6),hector.position())
     }
+ 
+
+    test "hector coloca trigo alrededor suyo formando un cuadrado y
+          donde esta el, coloca el aspersor dejándolo en el medio
+          El aspersor riega "
+     {
+
+        
+        hector.position(game.at(5,1))
+        
+        hector.mover(abajo)
+        hector.sembrar(new Trigo(image = "wheat_0.png"))
+
+        assert.equals(game.at(5,0),hector.position())
+
+        hector.mover(derecha)
+        hector.sembrar(new Trigo(image = "wheat_0.png"))
+
+        assert.equals(game.at(6,0),hector.position())
+
+        hector.mover(arriba)
+        hector.sembrar(new Trigo(image = "wheat_0.png"))
+
+        assert.equals(game.at(6,1),hector.position())
+
+        hector.mover(arriba)
+        hector.sembrar(new Trigo(image = "wheat_0.png"))
+
+        assert.equals(game.at(6,2),hector.position())
+
+        hector.mover(izquierda)
+        hector.sembrar(new Trigo(image = "wheat_0.png"))
+
+        assert.equals(game.at(5,2),hector.position())
+
+        hector.mover(izquierda)
+        
+        hector.sembrar(new Trigo(image = "wheat_0.png"))
+
+        assert.equals(game.at(4,2),hector.position())
+
+        hector.mover(abajo)
+        hector.sembrar(new Trigo(image = "wheat_0.png"))
+
+        assert.equals(game.at(4,1),hector.position())
+
+        hector.mover(abajo)
+        hector.sembrar(new Trigo(image = "wheat_0.png"))
+
+        assert.equals(game.at(4,0),hector.position())
+
+        hector.mover(derecha)
+
+        assert.equals(game.at(5,0),hector.position())
+        
+        hector.mover(arriba)
+
+        assert.equals(game.at(5,1),hector.position())
+
+        hector.ponerAspersor(new Aspersor())
+     }
 
 
 }

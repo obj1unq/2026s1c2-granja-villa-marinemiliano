@@ -15,7 +15,10 @@ program farmville {
 
 	game.addVisualCharacter(hector)
 
-	const mercadoUno = new Mercado(position = game.at(6,5),monedasParaAbonar = 50)
+	//ACA SE PUEDE PAGAR TODO
+	const mercadoUno = new Mercado(position = game.at(6,5),monedasParaAbonar = 1000)
+
+	//ACA NO SE PUEDE PAGAR NADA
 	const mercadoDos = new Mercado(position = game.at(2,5),monedasParaAbonar = 50)
 
 	game.addVisual(mercadoUno)

@@ -3,6 +3,8 @@ import elementos.*
 import direcciones.*
 import granja.*
 
+
+//objecto usado para probar texto en los test
 object gameMock {
 	  
 	   var property mensajePersonaje = null
