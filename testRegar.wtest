@@ -94,6 +94,25 @@ describe "hector riega los cultivos" {
     }
 
 
+    test "hector coloca un tomaco intenta regarlo pero no puede ya que 
+    lo obstruye un elemento, en este caso un mercado" {
+        
+        //hector.position(game.at(5,5))
+        const tomaco = new Tomaco(image = "tomaco.png")
+
+        const mercadoDos = new Mercado(position = game.at(5,6),monedasParaAbonar = 1000)
+        game.addVisual(mercadoDos)
+        
+        hector.sembrar(tomaco)
+        
+        assert.equals("sembrando... Tomaco",hector.mensajePersonaje())
+
+        assert.throwsException({hector.regar()})
+        
+        assert.equals([tomaco],hector.cultivosSembrados())      
+    }
+
+
     test "hector intenta regar en parcela vacia y no puede" {
       
         hector.regar()
@@ -106,7 +125,7 @@ describe "hector riega los cultivos" {
 
     test "hector intenta regar en el mercado y no puede" {
       
-        const mercadoDos = new Mercado(position = game.at(5,6))
+        const mercadoDos = new Mercado(position = game.at(5,6),monedasParaAbonar = 1000)
         game.addVisual(mercadoDos)
 
         hector.mover(arriba)

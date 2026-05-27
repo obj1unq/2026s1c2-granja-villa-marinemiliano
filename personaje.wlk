@@ -160,9 +160,7 @@ object hector {
 
 
 
-				self.globosDeTexto(self,"coseché! " 
-								+ self.nombreElementoEnLaPosicion() + "! " +
-										"ve al mercado, vendelo presionando la v")
+	self.globosDeTexto(self,"coseché! " + self.nombreElementoEnLaPosicion() + " ve al mercado, vendelo presionando la v")
 
 
 				self.sacarCultivoCosechado(granja.elementoQueCompartePosicionCon(self))
@@ -174,9 +172,8 @@ object hector {
 			self.hablar(self,"Este " + self.nombreElementoEnLaPosicion() + " no es cosechable! tenes que regar con la letra r")
 
 
-			self.globosDeTexto(self,"Este " + self.	nombreElementoEnLaPosicion() + " 
-			
-								no es cosechable! tenes que regar con la letra r")
+			self.globosDeTexto(self,"Este " + self.nombreElementoEnLaPosicion() + " no es cosechable! tenes que regar con la letra r")
+
 		}
 	}
 
@@ -208,11 +205,9 @@ object hector {
 		   if(self.cultivosCosechados().isEmpty())
 		   {
 
-				self.hablar(self,"imposible vender! granero vacío
-				tenes que cosechar")
+				self.hablar(self,"imposible vender! granero vacío tenes que cosechar")
 			
-				self.globosDeTexto(self,"imposible vender! granero vacío
-				tenes que cosechar")
+				self.globosDeTexto(self,"imposible vender! granero vacío tenes que cosechar")
 		   }
 		   else
 		   {

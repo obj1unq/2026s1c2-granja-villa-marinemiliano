@@ -331,13 +331,11 @@ class Mercado{
 
 	method mensajePersonaje() {return interprete.mensajePersonaje()}
 	
-    var monedasParaAbonar = 1000
+    var property monedasParaAbonar 
 
     var pago = 0 
 
    method soyCosechable() {return false}
-
-   method monedasParaAbonar() {return monedasParaAbonar}
 
    var property mercaderia = []
 
@@ -352,17 +350,20 @@ class Mercado{
 
 		} else {
 		  
+			self.mensajeError("no tengo plata para comprar")
 		
-				self.hablar(self,"no tengo plata para comprar")
+			//self.hablar(self,"no tengo plata para comprar")
 
-				//PARA TEST	
-				self.globosDeTexto(self,"no tengo pla_a para comprar")
+			//PARA TEST	
+			self.globosDeTexto(self,"no tengo plata para comprar")
 		}
 	} 
 
 	method pagarA(persona) {
 		
 		persona.cobrar(pago)
+		
+		//LO REINICIO PARA UNA FUTURA TRANSACCION 
 		pago = 0	
 	}
 
