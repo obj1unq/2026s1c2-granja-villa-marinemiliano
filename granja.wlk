@@ -4,6 +4,17 @@ import personaje.*
 
 object farmVille{
 
+
+    //MENSAJES PARAMETRIZADOS   
+	const interprete = gameMock
+	
+	method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
+
+	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
+	
+	method mensajePersonaje() {return interprete.mensajePersonaje()}
+	
+    
     const mapa = [
         [_, _, _, _, _, _, _, _, _, _ ],
         [_, _, _, _, _, _, _, _, _, _ ],

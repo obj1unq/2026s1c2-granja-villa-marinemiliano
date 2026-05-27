@@ -140,7 +140,10 @@ object hector {
 		return if (not granja.tieneElementoAcaAdemasDe(self)) {
 
 			  
-			  self.hablar(self,"imposible cosechar aquí!,parcela vacía")		
+		  self.hablar(self,"imposible cosechar aquí!,parcela vacía")
+
+		  //MENSAJE PARA TEST, OFICIA COMO INTERPRETE
+		  self.globosDeTexto(self,"imposible cosechar aquí!,parcela vacía")   		
 		
 		}
 		else if(self.puedeCosechar(granja.elementoQueCompartePosicionCon(self)))
@@ -155,6 +158,13 @@ object hector {
 								+ self.nombreElementoEnLaPosicion() + "! " +
 										"ve al mercado, vendelo presionando la v")
 
+
+
+				self.globosDeTexto(self,"coseché! " 
+								+ self.nombreElementoEnLaPosicion() + "! " +
+										"ve al mercado, vendelo presionando la v")
+
+
 				self.sacarCultivoCosechado(granja.elementoQueCompartePosicionCon(self))
 			//}
 		}
@@ -162,7 +172,11 @@ object hector {
 		{
 
 			self.hablar(self,"Este " + self.nombreElementoEnLaPosicion() + " no es cosechable! tenes que regar con la letra r")
+
+
+			self.globosDeTexto(self,"Este " + self.	nombreElementoEnLaPosicion() + " 
 			
+								no es cosechable! tenes que regar con la letra r")
 		}
 	}
 
@@ -183,7 +197,9 @@ object hector {
 	  
 		return if (not granja.tieneElementoAcaAdemasDe(self)) {
 
-			self.hablar(self,"imposible vender algo!,no existe mercado en la parcela")
+				self.hablar(self,"imposible vender algo!,no existe mercado en la parcela")
+
+				self.globosDeTexto(self,"imposible vender algo!,no existe mercado en la parcela")
 
 		} 
 		else if(granja.hayMercadoAca(self.position())) {
@@ -192,9 +208,11 @@ object hector {
 		   if(self.cultivosCosechados().isEmpty())
 		   {
 
-			self.hablar(self,"imposible vender! granero vacío
-			tenes que cosechar")
-		
+				self.hablar(self,"imposible vender! granero vacío
+				tenes que cosechar")
+			
+				self.globosDeTexto(self,"imposible vender! granero vacío
+				tenes que cosechar")
 		   }
 		   else
 		   {
@@ -206,6 +224,8 @@ object hector {
 				self.vaciarLista(self.cultivosCosechados())
 
 				self.hablar(self,"Todo vendido!")
+
+				self.globosDeTexto(self,"Todo vendido!")
 		   }
 		
 		}
@@ -220,12 +240,17 @@ object hector {
 	method estadoContable() {
 	  
 	  self.hablar(self, "tengo " + self.cantidadCultivosCosechados() + " para vender. " + " recaudacion por ventas: " + self.oroRecibido() + " monedas" )
+
+	  self.globosDeTexto(self, "tengo " + self.cantidadCultivosCosechados() + " para vender. " + " recaudacion por ventas: " + self.oroRecibido() + " monedas" )
+
 	}
 
 
 	method verSembrados() {
 	  
 	  self.hablar(self, "tengo " + self.cantCultivosSembrados() + " cultivos para cosechar.")
+
+	  self.globosDeTexto(self, "tengo " + self.cantCultivosSembrados() + " cultivos para cosechar.")
 	}
 
 	method cantCultivosSembrados() {return self.cultivosSembrados().size()}
@@ -245,6 +270,8 @@ object hector {
 		  
 			self.hablar(self,"imposible poner aspersor aquí!, celda ocupada")
 
+			self.globosDeTexto(self,"imposible poner aspersor aquí!, celda ocupada")
+
 		} else {
 		  
 			self.ponerElemento(unAspersor) 
@@ -252,6 +279,8 @@ object hector {
 			self.hablar(self, "colocando... " + self.nombreElementoEnLaPosicion())
 
 											//unAspersor.nombreElemento()
+
+			self.globosDeTexto(self, "colocando... " + self.nombreElementoEnLaPosicion())
 
 			unAspersor.regar()	
 		}

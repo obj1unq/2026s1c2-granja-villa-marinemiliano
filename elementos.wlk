@@ -169,7 +169,9 @@ class Tomaco {
 			//tengo que validar antes que no haya un elemento arriba para 
 			//asi si poder mover el tomate (o sea regarlo)
 		    
-			self.validarPosicion("no me puedo mover hacia arriba,parcela ocupada.",game.at(position.x(),position.y() + 1))
+			self.validarPosicion("no me puedo mover hacia arriba,parcela ocupada.",
+			
+			game.at(position.x(),position.y() + 1))
 			
 			self.position(arriba.siguiente(self.position()))						
 		}
@@ -281,6 +283,7 @@ class Aspersor {
 		cultivo.madurar()
 	
 		self.hablar(self,"regando... " + cultivo.no_mbreElemento())
+		
 		self.globosDeTexto(self,"regando... " + cultivo.nombreElemento())
    }
 
