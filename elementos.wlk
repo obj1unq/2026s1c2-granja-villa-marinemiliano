@@ -37,13 +37,16 @@ class Maiz {
 
 	method precio() {return 150}
 
-	//para respetar lo polimorfico
-	method validarPosicion(mensaje,posicion) { }
 
-    method soyMercado() {return false}
+	method soyMercado() {return false}
     
 	method soyCultivo() {return true}
 
+
+	//LOS COLOQUE PARA RESPETAR OBJETOS POLIMORFICOS
+	method esCultivo(_elemento) {return _elemento.soyCultivo()}
+
+	method validarPosicion(mensaje,posicion) { }
 }
 
 class Trigo {
@@ -117,6 +120,8 @@ class Trigo {
 	//para respetar lo polimorfico
 	method validarPosicion(mensaje,posicion) { }
 
+	method esCultivo(_elemento) {return _elemento.soyCultivo()}
+
     method soyMercado() {return false}
 
 	method soyCultivo() {return true}
@@ -180,7 +185,6 @@ class Tomaco {
 
 	//ES EL TOMATE ACA QUIEN TIENE QUE PREGUNTARLE A LA GRANJA SI 
 	//ESTA OCUPADA LA CELDA DE ARRIBA SUYO
-
 	method validarPosicion(mensaje,posicion) {
 	  
 	  const nuevaPosicion = posicion
@@ -191,9 +195,12 @@ class Tomaco {
 	  }
 	}
 
-	method soyCosechable() {return true}
 
 	method precio() {return 80}
+	
+	method soyCosechable() {return true}
+
+	method esCultivo(_elemento) {return _elemento.soyCultivo()}
 
     method soyMercado() {return false}
 
@@ -230,7 +237,7 @@ class Aspersor {
 		game.addVisual(elemento) // Se agrega a modo de prueba	
   }
 	
-  method regar() {
+  method correrSistemaDeRiego() {
 
 
      game.onTick(3000,"riega celdas vecinas",{self.moverAspersorAVecinas()})
@@ -240,73 +247,100 @@ class Aspersor {
 
   method moverAspersorAVecinas(){
 	
-	self.regarHacia(game.at(position.x() + 1,position.y()))
-	self.irAPosicion(game.at(position.x() - 1,position.y()))
+				//ES EL QUE AGREGUE EN PONER ELEMENTO EN EL OBJETO PERSONAJE 
+						 
+	const posicionOriginal = self.position()
 
-	self.regarHacia(game.at(position.x() - 1,position.y()))
-	self.irAPosicion(game.at(position.x() + 1,position.y()))
-
-	self.regarHacia(game.at(position.x(),position.y() + 1))
-	self.irAPosicion(game.at(position.x(),position.y() - 1))
-
-	self.regarHacia(game.at(position.x(),position.y()-1))
-	self.irAPosicion(game.at(position.x(),position.y() + 1))
-
-	//DIAGONALES
-
-	self.regarHacia(game.at(position.x() + 1,position.y() - 1))
-	self.irAPosicion(game.at(position.x()- 1,position.y() + 1))
+	self.regarHacia(game.at(posicionOriginal.x() + 1,posicionOriginal.y()))
 	
-	self.regarHacia(game.at(position.x() + 1,position.y() + 1))
-	self.irAPosicion(game.at(position.x()- 1,position.y() - 1))
-	
-	self.regarHacia(game.at(position.x() - 1,position.y() - 1))
-	self.irAPosicion(game.at(position.x()+ 1,position.y() + 1))
-	
-	self.regarHacia(game.at(position.x() - 1,position.y() + 1))
-	self.irAPosicion(game.at(position.x()+ 1,position.y() - 1))
-  }
+	//VUELVE A SU POSICION ORIGINAL PARA MANTENER SU EJE
+	self.irAPosicion(posicionOriginal)
 
-					//direccion
-  method regarHacia(nuevaPosicion) {
+	// self.regarHacia(game.at(position.x() - 1,position.y()))
+	// self.irAPosicion(game.at(position.x() + 1,position.y()))
 
-	position = nuevaPosicion
-    //position = direccion.siguiente(self.position())
-    self.regadio(self.cultivoEnLaPosicion())
+	// self.regarHacia(game.at(position.x(),position.y() + 1))
+	// self.irAPosicion(game.at(position.x(),position.y() - 1))
+
+	// self.regarHacia(game.at(position.x(),position.y()-1))
+	// self.irAPosicion(game.at(position.x(),position.y() + 1))
+
+	// //DIAGONALES
+
+	// self.regarHacia(game.at(position.x() + 1,position.y() - 1))
+	// self.irAPosicion(game.at(position.x()- 1,position.y() + 1))
+	
+	// self.regarHacia(game.at(position.x() + 1,position.y() + 1))
+	// self.irAPosicion(game.at(position.x()- 1,position.y() - 1))
+	
+	// self.regarHacia(game.at(position.x() - 1,position.y() - 1))
+	// self.irAPosicion(game.at(position.x()+ 1,position.y() + 1))
+	
+	// self.regarHacia(game.at(position.x() - 1,position.y() + 1))
+	// self.irAPosicion(game.at(position.x()+ 1,position.y() - 1))
   }
 
   method irAPosicion(nuevaPosicion) {position = nuevaPosicion}
 
-   //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
-   method regadio(cultivo) {
-	  
-		cultivo.madurar()
+					//direccion
+  method regarHacia(nuevaPosicion) {
+
+	self.irAPosicion(nuevaPosicion)
+
+    //position = direccion.siguiente(self.position())
+	self.regar()
+  }
+
+  method regar() {  
 	
-		self.hablar(self,"regando... " + cultivo.no_mbreElemento())
-		
-		self.globosDeTexto(self,"regando... " + cultivo.nombreElemento())
-   }
+		return if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
 
-   method cultivoEnLaPosicion(){
-		
-		// /method que tanto unique como colliders NO obtiene el objeto sino el visual, OJO ACA! 
-		
-		return game.uniqueCollider(self)
-		
-		//return game.colliders(self).first()
-		
-		//OTRAS DIFERENTES FORMAS DE TRAERME EL CULTIVO QUE SE 
-		//ENCUENTRA EN LA MISMA POSICION
 
-		//return game.colliders(self.cultivosSembrados().get(1))
+		 	self.regadio(granja.elementoQueCompartePosicionCon(self))
+		}
+
+		// return if (not granja.tieneElementoAcaAdemasDe(self) ) {
+		  
+		// 	//self.hablar(self,"imposible regar aqui!,parcela vacia")		
+
+		// 	//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
+		// 	//self.globosDeTexto(self,"imposible regar aqui!,parcela vacia")
+
+		// } 
+		// else if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
+
+
+		// 	self.regadio(granja.elementoQueCompartePosicionCon(self))
+		// }
+		// else {
+
+		// 	//self.hablar(self,"imposible regar aqui! esto no es un cultivo")
+			
+		// 	//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
+		// 	//self.globosDeTexto(self,"imposible regar aqui! esto no es un cultivo")
+
+		// }
 	}
 
+	method esCultivo(_elemento) {return _elemento.soyCultivo()}
+
+
+   //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
+   method regadio(_cultivo) {
+	  
+		_cultivo.madurar()
+	
+		self.hablar(self,"regando... " + _cultivo.no_mbreElemento())
+		
+		self.globosDeTexto(self,"regando... " + _cultivo.nombreElemento())
+   }
 
 	method validarPosicion(mensaje,posicion) { }
 
     method soyMercado() {return false}
 
 	method soyCultivo() {return false}
+
 }
 
 class Mercado{

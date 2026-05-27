@@ -64,6 +64,8 @@ object farmVille{
         return position.x().between(0, game.width() -1) and position.y().between(0, game.height() -1 )
     }
 
+    method esCultivo(_elemento) {return _elemento.soyCultivo()}
+
 	method soyCultivo() {return false}
 
     method soyMercado() {return false}

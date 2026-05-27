@@ -279,7 +279,7 @@ object hector {
 
 			self.globosDeTexto(self, "colocando... " + self.nombreElementoEnLaPosicion())
 
-			unAspersor.regar()	
+			unAspersor.correrSistemaDeRiego()	
 		}
 	}
 
