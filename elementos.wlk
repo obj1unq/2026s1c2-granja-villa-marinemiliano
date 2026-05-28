@@ -7,23 +7,10 @@ import granja.*
 class Maiz {
 
 	var property position = game.center() 
-	var property image  
+	var property image = "corn_baby.png" 
 	var property nombreElemento = "Maiz"
 
-	var property granja = farmVille  
-
-    method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
-
-
-	//MENSAJES PARAMETRIZADOS   
-	const interprete = gameMock
-	
-	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
-
-	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
-	
-	method mensajePersonaje() {return interprete.mensajePersonaje()}
-	
+	var property granja = farmVille  	
 
 	method posicionarElementoEn(_nuevaPosicion,_elemento) {
 		
@@ -41,34 +28,17 @@ class Maiz {
     
 	method esCultivo() {return true}
 
-
-	//LOS COLOQUE PARA RESPETAR OBJETOS POLIMORFICOS
-	
-
-	method validarPosicion(_mensaje,_posicion) { }
 }
 
 class Trigo {
 	
 	var property position = game.center() 
-	var property image  
+	var property image = "wheat_0.png"
+	
 	var property evolucion = 0
 	var property nombreElemento = "Trigo"
 
 	var property granja = farmVille  
-
-    method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
-
-
-	//MENSAJES PARAMETRIZADOS
-    const interprete = gameMock
-	
-	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
-
-	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
-	
-	method mensajePersonaje() {return interprete.mensajePersonaje()}
-	
 
 	method posicionarElementoEn(_nuevaPosicion,_elemento) {
 		
@@ -116,9 +86,6 @@ class Trigo {
 			0
 		}
 	}
-
-	//para respetar lo polimorfico
-	method validarPosicion(mensaje,posicion) { }
 	
 	method soyCosechable() {return self.evolucion() >= 2}
 
@@ -132,7 +99,7 @@ class Trigo {
 class Tomaco {
 
 	var property position = game.at(1, 1) 
-	var property image  
+	var property image = "tomaco.png" 
 	var property nombreElemento = "Tomaco"
 
 	var property granja = farmVille  
@@ -159,7 +126,7 @@ class Tomaco {
 
 	method madurar() {
 		
-		if (self.position().y() == farmVille.alto()-1) {
+		if (self.position().y() == game.height()-1) {
 		  
 			//position = game.at(self.position().x(), 0)
 			self.position(game.at(self.position().x(),0) )
@@ -222,23 +189,50 @@ class Aspersor {
 
   method posicionarElementoEn(_nuevaPosicion,_elemento) {
 	
-	self.irAPosicion(_nuevaPosicion)
-	
-	//self.position(_nuevaPosicion)
-	//position = _nuevaPosicion	//self.irAPosicion(_nuevaPosicion)
- 	game.addVisual(_elemento) // Se agrega a modo de prueba	
+		self.irAPosicion(_nuevaPosicion)
+		
+		//self.position(_nuevaPosicion)
+		//position = _nuevaPosicion	//self.irAPosicion(_nuevaPosicion)
+		game.addVisual(_elemento) // Se agrega a modo de prueba	
    	
 	}
 	
   method correrSistemaDeRiego() {
 
      game.onTick(3000,"riega celdas vecinas",{ self.moverAspersorAVecinas() })
-	
-     //game.schedule(2000,{self.moverAspersorAVecinas()})
+
   }
 
 
   method moverAspersorAVecinas(){
+
+
+	/* 
+	   Creo que entiendo cuál es el error. Primero, estás haciéndolo 
+	   de forma muy rara, estás moviendo el aspersor para verificar las colisiones, 
+	   lo cual podrías simplificar mucho.
+
+
+		Si querés seguir moviendo el aspersor, simplemente cambiá `cultivoEnLaPosicion()` para que use `game.colliders(self)`, para que te devuelva una lista y no te de error si está vacía, lo podrías filtrar con el `esCultivo()`, y también tendrías que cambiar `regarHacia(_nuevaPosicion)` para que llame `regadio()` sólo si se encontró posta un cultivo.
+
+		Lo que yo haría, es añadir un método helper, algo onda `regarPosicion(_posicion)`, que directamente use `game.getObjectsIn(position)`, y así actualizás `moverAspersorAVecinas()` (también habría que cambiarle el nombre xd) para que use ese `regarPosicion()`
+	
+	
+	   Para solucionar esto, te recomiendo hacer la verificación 
+	   de las posiciones lindantes manteniendo el aspersor en su lugar,
+	   creando un método auxiliar "regarPosicion(_posicion)",
+	   usando game.getObjectsIn(_posicion.
+	
+	
+
+
+	   No te voy a mentir, este método está bastante feo. 
+	   Estás repitiendo demasiado código.
+
+		
+       Lo ideal sería que reemplaces todos los regarHacia y 
+	   irAPosicion por un par de regarPosicion(game.at(x, y)) 
+	*/
 	
 	self.regarHacia(game.at(position.x() + 1,position.y()))
 	self.irAPosicion(game.at(position.x() - 1,position.y()))
@@ -534,18 +528,26 @@ class Mercado{
 	
     var property monedasParaAbonar 
 
-    var pago = 0 
 
    var property mercaderia = []
 
    method transaccion(_cultivos,_persona) {
 		
+   		var dineroAPagar = 0 
+		
 		if (self.puedeComprarCultivos(self.sumarPreciosCultivos(_cultivos))) 
 		{
 		  
 			self.agregarTodosLosCultivos(_cultivos)
+			
+			//ESTO LO CAMBIE PORQUE AL PONER EL PAGO COMO LOCAL DE TRANSACCION NO PODIA
+			//USARLO EN COBRAR ENTONCES ESTA ASIGNACION LA MANDE ACA Y PASO EL DINERO
+			//A PAGAR POR PARAMETRO
+			
+			dineroAPagar = self.sumarPreciosCultivos(_cultivos)
+			
 			self.compra(_cultivos)	
-			self.pagarA(_persona)
+			self.pagarA(_persona,dineroAPagar)
 
 		} else {
 		  
@@ -558,12 +560,9 @@ class Mercado{
 		}
 	} 
 
-	method pagarA(_persona) {
+	method pagarA(_persona,dinero) {
 		
-		_persona.cobrar(pago)
-		
-		//LO REINICIO PARA UNA FUTURA TRANSACCION 
-		pago = 0	
+		_persona.cobrar(dinero)	
 	}
 
 
@@ -583,7 +582,6 @@ class Mercado{
 
 	method compra(_cultivos) {
 	    
-		pago = self.sumarPreciosCultivos(_cultivos)
 		self.descontarPorCompra(self.sumarPreciosCultivos(_cultivos))
 	}
 
@@ -600,8 +598,6 @@ class Mercado{
 	}
 
 	method precioCultivo(_cultivo) {return _cultivo.precio()}
-
-	method validarPosicion(_mensaje,_posicion) { }
 
 	method soyCosechable() {return false}
 

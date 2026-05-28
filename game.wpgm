@@ -9,8 +9,10 @@ program farmville {
 
 	//CONFIG	
 	game.title("La granja")
-	
-	farmVille.dibujarMapa()
+
+	game.height(7)
+    game.width(10)
+
 	game.ground("ground.png")
 
 	game.addVisualCharacter(hector)

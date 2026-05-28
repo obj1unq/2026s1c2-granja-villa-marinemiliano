@@ -38,14 +38,3 @@ object izquierda{
     }
 
 }
-
-object diagonal {
-
-  method siguiente(direccionUno,direccionDos,position) {
-        
-    direccionUno.siguiente(position)
-    direccionDos.siguiente(position)
-        
-  }
-
-}

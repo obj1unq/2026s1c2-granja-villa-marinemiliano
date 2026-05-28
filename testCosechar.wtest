@@ -9,7 +9,8 @@ describe "hector cosecha los cultivos" {
    method initialize() {
             
         game.clear()
-        farmVille.dibujarMapa() 
+        game.height(7)
+        game.width(10)
         hector.position(game.at(5,5))
    }
 

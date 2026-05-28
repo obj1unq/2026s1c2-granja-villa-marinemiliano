@@ -5,56 +5,9 @@ import personaje.*
 object farmVille{
 
 
-    //MENSAJES PARAMETRIZADOS   
-	const interprete = gameMock
-	
-	method hablar(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
+    //VALIDA EL TERRITORIO DE LA GRANJA
 
-	method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
-	
-	method mensajePersonaje() {return interprete.mensajePersonaje()}
-	
-    
-    const mapa = [
-        [_, _, _, _, _, _, _, _, _, _ ],
-        [_, _, _, _, _, _, _, _, _, _ ],
-        [_, _, _, _, _, _, _, _, _, _ ],
-        [_, _, _, _, _, _, _, _, _, _ ],
-        [_, _, _, _, _, _, _, _, _, _ ],
-        [_, _, _, _, _, _, _, _, _, _ ],
-        [_, _, _, _, _, _, _, _, _, _ ]
-    ].reverse()
-
-    method alto() {
-
-        return mapa.size()
-    }
-    method ancho() {
-
-        return mapa.anyOne().size()
-    }
-
-    method dibujarMapa() {
-        
-        game.height(self.alto())
-        game.width(self.ancho())
-
-        (0 .. self.ancho() -1).forEach({ x =>
-            (0 .. self.alto() -1).forEach({y =>
-                 self.dibujarCelda(x,y)
-            })
-        })
-    
-        // game.addVisual(pepita) //Lo agrego al final para que siempre esté arriba
-    }
-
-    method dibujarCelda(x,y) {
-
-        const dibujante = mapa.get(y).get(x)
-        dibujante.dibujar(game.at(x,y))
-    }
-
-    method validarDentro(_position) {
+     method validarDentro(_position) {
         if (not self.dentro(_position)) {
             self.error(_position.toString() + " no está dentro del tablero ")
         }
@@ -112,6 +65,50 @@ object farmVille{
 	}
 
 }
+
+
+    /* const mapa = [
+        [_, _, _, _, _, _, _, _, _, _ ],
+        [_, _, _, _, _, _, _, _, _, _ ],
+        [_, _, _, _, _, _, _, _, _, _ ],
+        [_, _, _, _, _, _, _, _, _, _ ],
+        [_, _, _, _, _, _, _, _, _, _ ],
+        [_, _, _, _, _, _, _, _, _, _ ],
+        [_, _, _, _, _, _, _, _, _, _ ]
+    ].reverse()
+
+    method alto() {
+
+        return mapa.size()
+    }
+    method ancho() {
+
+        return mapa.anyOne().size()
+    }
+
+    method dibujarMapa() {
+        
+        game.height(self.alto())
+        game.width(self.ancho())
+
+        (0 .. self.ancho() -1).forEach({ x =>
+            (0 .. self.alto() -1).forEach({y =>
+                 self.dibujarCelda(x,y)
+            })
+        })
+    
+        // game.addVisual(pepita) //Lo agrego al final para que siempre esté arriba
+    }
+
+    method dibujarCelda(x,y) {
+
+        const dibujante = mapa.get(y).get(x)
+        dibujante.dibujar(game.at(x,y))
+    }
+
+
+     */
+
 
     //SEGUNDA OPCION QUE TAMBIEN FUNCIONA
 
