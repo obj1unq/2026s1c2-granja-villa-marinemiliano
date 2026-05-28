@@ -117,8 +117,10 @@ describe "test sobre cultivos en lugares donde no se puede sembrar" {
 
   method initialize() {
             
-        game.clear()
-        farmVille.dibujarMapa() 
+      game.clear()
+      game.height(7)
+      game.width(10)
+      hector.position(game.at(5,5))
    }
 
   test "se quiere colocar cultivos donde hay un mercado y no se 

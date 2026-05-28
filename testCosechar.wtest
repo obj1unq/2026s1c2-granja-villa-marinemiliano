@@ -4,6 +4,26 @@ import personaje.*
 import direcciones.*
 import elementos.*
 
+
+
+describe "hector" {
+    
+   method initialize() {
+            
+        game.clear()
+        game.height(7)
+        game.width(10)
+        hector.position(game.at(5,5))
+   }
+
+   test "description" {
+     
+        
+       assert.equals([],game.getObjectsIn(game.origin()))
+   }
+
+}
+
 describe "hector cosecha los cultivos" {
     
    method initialize() {

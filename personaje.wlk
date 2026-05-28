@@ -280,15 +280,4 @@ object hector {
 		}
 	}
 
-	//PROBAR PONIENDO EL MAIZ NO SOBRE HECTOR SINO AL LADO 
-	// method sembrar(cultivo) 
-	// {cultivo.ponerCultivoEn(game.at(self.position().x()+1,
-	// 						        self.position().y()))}
-
-
-	//SEGUNDA OPCION QUE TAMBIEN FUNCIONA 
-	
-	//method regar() {return  granja.validarRiegoEn(self.position())}
-
-	//method esCosechable() {return false}
 }

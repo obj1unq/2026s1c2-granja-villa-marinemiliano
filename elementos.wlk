@@ -181,33 +181,82 @@ class Aspersor {
   var property position = game.center() 
   var property image = "aspersor.png"
   var property nombreElemento = "Aspersor"
-
   var property granja = farmVille  
+
+  //LISTO TODAS LAS POSICIONES QUE TIENE QUE VISITAR PARA EVALUAR
+
+  const regarParcelasVecinas = [derecha.siguiente(arriba.siguiente(position)),
+								izquierda.siguiente(arriba.siguiente(position)),
+								derecha.siguiente(abajo.siguiente(position)),
+								izquierda.siguiente(abajo.siguiente(position)),
+								  
+								izquierda.siguiente(position),
+								derecha.siguiente(position),
+								arriba.siguiente(position),
+								abajo.siguiente(position)]
+  										
+
 
   method mensaje(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
   method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
 
-  method posicionarElementoEn(_nuevaPosicion,_elemento) {
-	
+
+  method posicionarElementoEn(_nuevaPosicion,_elemento) { 
+		
 		self.irAPosicion(_nuevaPosicion)
 		
-		//self.position(_nuevaPosicion)
-		//position = _nuevaPosicion	//self.irAPosicion(_nuevaPosicion)
 		game.addVisual(_elemento) // Se agrega a modo de prueba	
    	
-	}
+  }
+
+  
+  method irAPosicion(_nuevaPosicion){position = _nuevaPosicion}
+
 	
   method correrSistemaDeRiego() {
 
-     game.onTick(3000,"riega celdas vecinas",{ self.moverAspersorAVecinas() })
+     
+	 game.onTick(6000,"riega celdas vecinas",{ self.regarPosicionesVecinas() })
 
   }
 
+  method regarPosicionesVecinas() {
+	
+	 regarParcelasVecinas.forEach({ _posicion => self.regarPosicionSiPuede(_posicion)})
+  }
 
-  method moverAspersorAVecinas(){
+  method regarPosicionSiPuede(_posicion) {
+	
+	//ESTO FUNCIONA PERO FALLA EN ALGUNAS COSAS
+	//return if(granja.haySoloCultivosEn(_posicion))
+	
+	//PREGUNTA SI HAY UN ELEMENTO EN LA POSICION Y SI ESTA SI ES UN CULTIVO
+	return if(granja.hayElementoEnPosicion(_posicion) && granja.elementosEnLaPosicion(_posicion).first().esCultivo())
+	{
+
+		self.regadio(granja.elementosEnLaPosicion(_posicion).first())
+	}
+		
+  }
 
 
-	/* 
+  //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
+   method regadio(_cultivo) {
+	  
+	  _cultivo.madurar()
+	  self.mensaje(self,"Regando " + _cultivo.nombreElemento())
+	}
+
+	method esCultivo() {return false}
+
+	method soyCosechable() {return false}
+	
+    method soyMercado() {return true}
+
+}
+
+
+/*  
 	   Creo que entiendo cuál es el error. Primero, estás haciéndolo 
 	   de forma muy rara, estás moviendo el aspersor para verificar las colisiones, 
 	   lo cual podrías simplificar mucho.
@@ -216,15 +265,12 @@ class Aspersor {
 		Si querés seguir moviendo el aspersor, simplemente cambiá `cultivoEnLaPosicion()` para que use `game.colliders(self)`, para que te devuelva una lista y no te de error si está vacía, lo podrías filtrar con el `esCultivo()`, y también tendrías que cambiar `regarHacia(_nuevaPosicion)` para que llame `regadio()` sólo si se encontró posta un cultivo.
 
 		Lo que yo haría, es añadir un método helper, algo onda `regarPosicion(_posicion)`, que directamente use `game.getObjectsIn(position)`, y así actualizás `moverAspersorAVecinas()` (también habría que cambiarle el nombre xd) para que use ese `regarPosicion()`
-	
+
 	
 	   Para solucionar esto, te recomiendo hacer la verificación 
 	   de las posiciones lindantes manteniendo el aspersor en su lugar,
 	   creando un método auxiliar "regarPosicion(_posicion)",
 	   usando game.getObjectsIn(_posicion.
-	
-	
-
 
 	   No te voy a mentir, este método está bastante feo. 
 	   Estás repitiendo demasiado código.
@@ -232,277 +278,7 @@ class Aspersor {
 		
        Lo ideal sería que reemplaces todos los regarHacia y 
 	   irAPosicion por un par de regarPosicion(game.at(x, y)) 
-	*/
-	
-	self.regarHacia(game.at(position.x() + 1,position.y()))
-	self.irAPosicion(game.at(position.x() - 1,position.y()))
-
-	self.regarHacia(game.at(position.x() - 1,position.y()))
-	self.irAPosicion(game.at(position.x() + 1,position.y()))
-
-	self.regarHacia(game.at(position.x(),position.y() + 1))
-	self.irAPosicion(game.at(position.x(),position.y() - 1))
-
-	self.regarHacia(game.at(position.x(),position.y()-1))
-	self.irAPosicion(game.at(position.x(),position.y() + 1))
-
-	//DIAGONALES
-
-	self.regarHacia(game.at(position.x() + 1,position.y() - 1))
-	self.irAPosicion(game.at(position.x()- 1,position.y() + 1))
-	
-	self.regarHacia(game.at(position.x() + 1,position.y() + 1))
-	self.irAPosicion(game.at(position.x()- 1,position.y() - 1))
-	
-	self.regarHacia(game.at(position.x() - 1,position.y() - 1))
-	self.irAPosicion(game.at(position.x()+ 1,position.y() + 1))
-	
-	self.regarHacia(game.at(position.x() - 1,position.y() + 1))
-	self.irAPosicion(game.at(position.x()+ 1,position.y() - 1))
-  }
-
-					//direccion
-  method regarHacia(_nuevaPosicion) {
-
-	self.irAPosicion(_nuevaPosicion)
-
-	//position = _nuevaPosicion
-
-    self.regadio(self.cultivoEnLaPosicion())
-  }
-
-    method regar() {  
-	
-		return if(granja.elementoQueCompartePosicionCon(self).esCultivo()) {
-
-
-		 	self.regadio(granja.elementoQueCompartePosicionCon(self))
-		}
-		else
-		{}
-
-		// return if (not granja.tieneElementoAcaAdemasDe(self) ) {
-		  
-		// 	//self.hablar(self,"imposible regar aqui!,parcela vacia")		
-
-		// 	//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
-		// 	//self.globosDeTexto(self,"imposible regar aqui!,parcela vacia")
-
-		// } 
-		// else if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
-
-
-		// 	self.regadio(granja.elementoQueCompartePosicionCon(self))
-		// }
-		// else {
-
-		// 	//self.hablar(self,"imposible regar aqui! esto no es un cultivo")
-			
-		// 	//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
-		// 	//self.globosDeTexto(self,"imposible regar aqui! esto no es un cultivo")
-
-		// }
-
-	}
-
-
-  	method irAPosicion(_nuevaPosicion) {
-	
-		position = _nuevaPosicion
-  	}
-
-   //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
-   method regadio(_cultivo) {
-	  
-	  _cultivo.madurar()
-	  self.mensaje(self,"Regando " + _cultivo.nombreElemento())
-	}
-
-
-	method cultivoEnLaPosicion(){
-		
-		//comprobe que tanto unique como colliders NO obtiene el objeto sino el visual, OJO ACA! 
-		return game.uniqueCollider(self)
-		
-		//return game.colliders(self).first()
-		
-		//OTRAS DIFERENTES FORMAS DE TRAERME EL CULTIVO QUE SE 
-		//ENCUENTRA EN LA MISMA POSICION
-
-		//return game.colliders(self.cultivosSembrados().get(1))
-	}
-
-
-	method validarEspacio(_mensaje,_posicion) {
-	  
-	  const _nuevaPosicion = _posicion
-	  
-      return if(granja.hayElementoEnPosicion(_nuevaPosicion)) {
-		
-		self.mensajeError(_mensaje)
-	  }
-	}
-
-	method esCultivo() {return false}
-
-	method soyCosechable() {return false}
-	
-    method soyMercado() {return true}
-}
-
-
-
-
-// class Aspersor {
-  
-//   var property position = game.center() 
-//   var property image = "aspersor.png"
-//   var property nombreElemento = "Aspersor"
-
-//   var property granja = farmVille  
-
-//   method mensajeError(stringMensaje) {self.error(stringMensaje)}
-
-  
-//   //MENSAJES PARAMETRIZADOS
-
-//   const interprete = gameMock
-
-//   method hablar(_visual,stringMensaje) {game.say(_visual,stringMensaje)}
-
-//   method globosDeTexto(_visual,_mensaje) {interprete.say(_visual,_mensaje)} 
-
-//   method mensajePersonaje() {return interprete.mensajePersonaje()}
-	
-  
-//   method posicionarElementoEn(nuevaPosicion,elemento) {
-
-// 		position = nuevaPosicion
-// 		//self.irAPosicion(nuevaPosicion)
-// 		game.addVisual(elemento) // Se agrega a modo de prueba	
-//   }
-	
-//   method correrSistemaDeRiego() {
-
-// 	 //self.moverAspersorAVecinas()
-//     const posicionOriginal = self.position()
-
-// 	 game.onTick(1000,"riega celdas vecinas",{self.irAPosicion(game.at(position.x() + 1,position.y()))})
-
-// 	 //self.regadio(granja.elementoQueCompartePosicionCon(self))
-     
-// 	 game.onTick(1000,"riega celdas vecinas",{self.irAPosicion(posicionOriginal)})
-     
-// 	 //game.schedule(2000,{self.moverAspersorAVecinas()})
-
-//   }
-
-
-//   method moverAspersorAVecinas(){
-	
-// 				//ES EL QUE AGREGUE EN PONER ELEMENTO EN EL OBJETO PERSONAJE 
-						 
-// 	const posicionOriginal = self.position()
-
-// 	self.irAPosicion(game.at(posicionOriginal.x() + 1,posicionOriginal.y()))
-	
-// 	//self.irAPosicion(game.at(position.x() + 1,position.y() ) )
-
-// 	self.regadio(granja.elementoQueCompartePosicionCon(self))
-	
-// 	//VUELVE A SU POSICION ORIGINAL PARA MANTENER SU EJE
-// 	//self.irAPosicion(game.at(position.x(), position.y()))
-	
-// 	self.irAPosicion(posicionOriginal)
-
-
-// 	//  self.regarHacia(game.at(position.x() + 1,position.y()))
-// 	//  self.irAPosicion(game.at(position.x() - 1,position.y()))
-
-
-// 	// self.regarHacia(game.at(position.x() - 1,position.y()))
-// 	// self.irAPosicion(game.at(position.x() + 1,position.y()))
-
-// 	// self.regarHacia(game.at(position.x(),position.y() + 1))
-// 	// self.irAPosicion(game.at(position.x(),position.y() - 1))
-
-// 	// self.regarHacia(game.at(position.x(),position.y()-1))
-// 	// self.irAPosicion(game.at(position.x(),position.y() + 1))
-
-// 	// //DIAGONALES
-
-// 	// self.regarHacia(game.at(position.x() + 1,position.y() - 1))
-// 	// self.irAPosicion(game.at(position.x()- 1,position.y() + 1))
-	
-// 	// self.regarHacia(game.at(position.x() + 1,position.y() + 1))
-// 	// self.irAPosicion(game.at(position.x()- 1,position.y() - 1))
-	
-// 	// self.regarHacia(game.at(position.x() - 1,position.y() - 1))
-// 	// self.irAPosicion(game.at(position.x()+ 1,position.y() + 1))
-	
-// 	// self.regarHacia(game.at(position.x() - 1,position.y() + 1))
-// 	// self.irAPosicion(game.at(position.x()+ 1,position.y() - 1))
-
-//   }
-
-//   //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
-//    method regadio(cultivo) {
-	  
-// 	  cultivo.madurar()
-  
-// 	}
-
-
-//    method irAPosicion(nuevaPosicion) {
-	
-// 	position = nuevaPosicion}
-
-// 					//direccion
-
-//   method regarHacia(nuevaPosicion) {
-
-// 	self.irAPosicion(nuevaPosicion)
-
-// 	self.regadio(granja.elementoQueCompartePosicionCon(self))
-
-//   }
-
-//   method regar() {  
-	
-
-// 		self.regadio(granja.elementoQueCompartePosicionCon(self))
-
-// 		// return if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
-
-
-// 		//  	self.regadio(granja.elementoQueCompartePosicionCon(self))
-// 		// }
-
-// 		// return if (not granja.tieneElementoAcaAdemasDe(self) ) {
-		  
-// 		// 	//self.hablar(self,"imposible regar aqui!,parcela vacia")		
-
-// 		// 	//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
-// 		// 	//self.globosDeTexto(self,"imposible regar aqui!,parcela vacia")
-
-// 		// } 
-// 		// else if(self.esCultivo(granja.elementoQueCompartePosicionCon(self))) {
-
-
-// 		// 	self.regadio(granja.elementoQueCompartePosicionCon(self))
-// 		// }
-// 		// else {
-
-// 		// 	//self.hablar(self,"imposible regar aqui! esto no es un cultivo")
-			
-// 		// 	//MENSAJE PARA TEST, OFICIA COMO INTERPRETE
-// 		// 	//self.globosDeTexto(self,"imposible regar aqui! esto no es un cultivo")
-
-// 		// }
-// 	}
-
-
-// }
+ */
 
 class Mercado{
 

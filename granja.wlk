@@ -29,7 +29,21 @@ object farmVille{
       return game.getObjectsIn(_posicion).any({ o => o.soyMercado() })
     }
 
-    
+
+//   method haySoloCultivosEn(_posicion) {
+	
+// 	    return self.elementosEnLaPosicion(_posicion).all({ elemento => elemento.esCultivo() })
+//   }
+
+
+    //DEVUELVE LOS ELEMENTOS QUE SE ENCUENTREN EN ESTA 
+    //POSICION DE LA GRANJA
+    method elementosEnLaPosicion(_posicion) {
+      
+      return game.getObjectsIn(_posicion)
+    }
+
+
     //esta evalua si hay un objeto en la celda donde tambien esta 
     //el elemento pasado por parametro
     method tieneElementoAcaAdemasDe(_elemento) {
