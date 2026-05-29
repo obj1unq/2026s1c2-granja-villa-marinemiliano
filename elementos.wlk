@@ -216,7 +216,7 @@ class Aspersor {
   method correrSistemaDeRiego() {
 
      
-	 game.onTick(6000,"riega celdas vecinas",{ self.regarPosicionesVecinas() })
+	 game.onTick(1000,"riega celdas vecinas",{ self.regarPosicionesVecinas() })
 
   }
 
@@ -231,12 +231,17 @@ class Aspersor {
 	//return if(granja.haySoloCultivosEn(_posicion))
 	
 	//PREGUNTA SI HAY UN ELEMENTO EN LA POSICION Y SI ESTA SI ES UN CULTIVO
-	return if(granja.hayElementoEnPosicion(_posicion) && granja.elementosEnLaPosicion(_posicion).first().esCultivo())
+	return if(granja.hayElementoEnPosicion(_posicion) && self.hayCultivoAca(_posicion) )
 	{
 
 		self.regadio(granja.elementosEnLaPosicion(_posicion).first())
 	}
 		
+  }
+
+  method hayCultivoAca(_posicion) {
+	
+	return granja.elementosEnLaPosicion(_posicion).first().esCultivo()
   }
 
 
