@@ -231,7 +231,7 @@ class Aspersor {
 	//return if(granja.haySoloCultivosEn(_posicion))
 	
 	//PREGUNTA SI HAY UN ELEMENTO EN LA POSICION Y SI ESTA SI ES UN CULTIVO
-	return if(granja.hayElementoEnPosicion(_posicion) && self.hayCultivoAca(_posicion) )
+	return if(granja.hayElementoEnPosicion(_posicion) && granja.hayCultivoAca(_posicion) )
 	{
 
 		self.regadio(granja.elementosEnLaPosicion(_posicion).first())
@@ -239,17 +239,11 @@ class Aspersor {
 		
   }
 
-  method hayCultivoAca(_posicion) {
-	
-	return granja.elementosEnLaPosicion(_posicion).first().esCultivo()
-  }
-
 
   //AL ACTO DE REGAR LO SEMBRADO SE LO CONOCE COMO REGADIO
    method regadio(_cultivo) {
 	  
 	  _cultivo.madurar()
-	  self.mensaje(self,"Regando " + _cultivo.nombreElemento())
 	}
 
 	method esCultivo() {return false}

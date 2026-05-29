@@ -36,6 +36,12 @@ object farmVille{
 //   }
 
 
+   method hayCultivoAca(_posicion) {
+	
+	return self.elementosEnLaPosicion(_posicion).first().esCultivo()
+   }
+
+
     //DEVUELVE LOS ELEMENTOS QUE SE ENCUENTREN EN ESTA 
     //POSICION DE LA GRANJA
     method elementosEnLaPosicion(_posicion) {
