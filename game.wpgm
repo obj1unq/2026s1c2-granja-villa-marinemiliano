@@ -1,18 +1,69 @@
 import wollok.game.*
 import personaje.*
-import cultivos.*
+import elementos.*
+import granja.*
+import direcciones.*
+
 
 program farmville {
-	//  CONFIG	
+
+	//CONFIG	
 	game.title("La granja")
-	game.height(10)
-	game.width(10)
+
+	game.height(7)
+    game.width(10)
+
 	game.ground("ground.png")
 
-	//  VISUALES
- 	game.addVisualCharacter(personaje)
- 	game.addVisual(new Maiz()) // Se agrega a modo de prueba
- 	
+	game.addVisualCharacter(hector)
+
+	//ACA SE PUEDE PAGAR TODO
+	const mercadoUno = new Mercado(position = game.at(6,5),monedasParaAbonar = 1000)
+
+	//ACA NO SE PUEDE PAGAR NADA
+	const mercadoDos = new Mercado(position = game.at(2,5),monedasParaAbonar = 50)
+
+	game.addVisual(mercadoUno)
+	game.addVisual(mercadoDos)
+
+	keyboard.a().onPressDo({ hector.mover(izquierda)})
+	keyboard.d().onPressDo({ hector.mover(derecha)})
+	keyboard.w().onPressDo({ hector.mover(arriba)})
+	keyboard.s().onPressDo({ hector.mover(abajo)})	
+
+	keyboard.m().onPressDo({hector.sembrar(new Maiz())})
+	keyboard.t().onPressDo({hector.sembrar(new Trigo())})
+	keyboard.o().onPressDo({hector.sembrar(new Tomaco())})
+	
+	keyboard.r().onPressDo({hector.regar()})	
+	keyboard.c().onPressDo({hector.cosechar()})
+
+	keyboard.v().onPressDo({hector.vender()})
+	keyboard.space().onPressDo({hector.estadoContable()})
+	
+	keyboard.p().onPressDo({hector.verSembrados()})
+
+
+	keyboard.f().onPressDo({hector.ponerAspersor(new Aspersor())})
+
+	//uso la f porque la a ya esta ocupada
+
+
+
+	// const asper = new Aspersor()
+	// keyboard.f().onPressDo({asper.correrSistemaDeRiego() })
+
+
  	//  COMIENZA
 	game.start()
 }
+
+
+    // const maizUno = new Maiz(image = "corn_baby.png")
+	// const trigoUno = new Trigo(image = "wheat_0.png")
+	// const trigoDos = new Trigo(image = "wheat_0.png")
+
+	// //  VISUALES
+ 	// game.addVisualCharacter(hector)
+	// game.addVisual(maizUno)
+	// game.addVisual(trigoUno)

@@ -1,0 +1,276 @@
+import wollok.game.*
+import granja.*
+import personaje.*
+import direcciones.*
+import elementos.*
+
+
+describe "name" {
+
+  method initialize() {
+            
+        game.clear()
+        game.height(7)
+        game.width(10)
+        hector.position(game.at(5,5))
+   }
+  
+   test "hector no puede vender en parcela vacia" {
+
+      
+      hector.mover(arriba)
+      hector.vender()
+
+      assert.equals("imposible vender algo!,no existe mercado en la parcela", hector.mensajePersonaje())  
+   }
+
+
+  test "hector cosecha maiz, trigo y tomaco sin regar y regado.intenta vender pero no puede por ser parcela vacia
+   
+   luego lo lleva al mercado para venderlo 150 por maiz 100 por trigo y 160 por los dos tomaco. 
+
+   luego siembra trigo etapa 3 va al mercado y lo vende se le acumulan 200 mas
+   
+   Luego siembra maiz lo cosecha pero no lo vende" {
+
+     hector.position(game.at(5,0))
+     const maiz = new Maiz(image = "corn_baby.png")
+     hector.sembrar(maiz)
+
+     
+     //NECESITE TRADUCIR, BAJAR EL TEXTO DEL GAME A ALGO QUE SE PUEDA
+     //TESTEAR ACA, EN LA PARTE INTERPRETE DEL MODULO DEL PERSONAJE SE
+     //ENCUENTRA PROGRAMADO
+     
+     assert.equals("sembrando... Maiz", hector.mensajePersonaje())
+     
+
+     assert.equals([maiz],hector.cultivosSembrados())
+     assert.equals(game.at(5,0),hector.position())
+     assert.equals(game.at(5,0),maiz.position())
+
+
+     hector.regar()
+
+     assert.equals("regando... Maiz", hector.mensajePersonaje())
+
+     assert.equals([],hector.cultivosCosechados())
+     assert.equals(0,hector.cantidadCultivosCosechados())
+     assert.equals([maiz],hector.cultivosSembrados())
+     assert.equals(game.at(5,0),hector.position())
+     assert.equals(game.at(5,0),maiz.position())
+
+     hector.cosechar()
+
+     assert.equals("coseché! Maiz ve al mercado, vendelo presionando la v", hector.mensajePersonaje())
+
+     assert.equals([maiz],hector.cultivosCosechados())
+     assert.equals(1,hector.cantidadCultivosCosechados())
+     assert.equals(game.at(5,0),hector.position())
+
+
+     //COSECHA TRIGO NIVEL 2
+
+     const trigo = new Trigo(image = "wheat_0.png")
+     hector.sembrar(trigo)
+
+     assert.equals("sembrando... Trigo", hector.mensajePersonaje())
+     
+     assert.equals([maiz,trigo],hector.cultivosSembrados())
+     assert.equals(2,hector.cantCultivosSembrados())
+     assert.equals(game.at(5,0),hector.position())
+     assert.equals(game.at(5,0),trigo.position())
+
+     hector.regar()
+
+     assert.equals("regando... Trigo",hector.mensajePersonaje())
+     
+     assert.equals(game.at(5,0),hector.position())
+     assert.equals(game.at(5,0),trigo.position())
+
+     hector.regar()
+
+     assert.equals("regando... Trigo",hector.mensajePersonaje())
+     
+     assert.equals(game.at(5,0),hector.position())
+     assert.equals(game.at(5,0),trigo.position())
+
+     hector.cosechar()
+
+     assert.equals("coseché! Trigo ve al mercado, vendelo presionando la v", hector.mensajePersonaje())
+
+     assert.equals([maiz,trigo],hector.cultivosCosechados())
+     assert.equals(2,hector.cantidadCultivosCosechados())
+     assert.equals(game.at(5,0),hector.position())
+
+    
+     //TOMACO COSECHADO DIRECTO
+
+     const tomaco = new Tomaco(image = "tomaco.png")
+     hector.sembrar(tomaco)
+
+     assert.equals("sembrando... Tomaco", hector.mensajePersonaje())
+      
+     hector.cosechar()
+
+     assert.equals("coseché! Tomaco ve al mercado, vendelo presionando la v", hector.mensajePersonaje())
+
+     assert.equals([maiz,trigo,tomaco],hector.cultivosCosechados())
+     assert.equals(3,hector.cantidadCultivosCosechados())
+
+    
+
+     //TOMACO COSECHADO LUEGO DE REGARSE
+
+
+      const tomacoDos = new Tomaco(image = "tomaco.png")
+      hector.sembrar(tomacoDos)
+
+      assert.equals("sembrando... Tomaco", hector.mensajePersonaje())
+      
+      hector.regar()
+      
+      assert.equals("regando... Tomaco", hector.mensajePersonaje())
+
+      assert.equals([maiz,trigo,tomaco,tomacoDos],hector.cultivosSembrados())
+      assert.equals(game.at(5,0),hector.position())
+      assert.equals(game.at(5,1),tomacoDos.position())
+    
+      hector.mover(arriba)
+        
+      hector.cosechar()
+
+      assert.equals("coseché! Tomaco ve al mercado, vendelo presionando la v", hector.mensajePersonaje())
+
+      assert.equals([maiz,trigo,tomaco,tomacoDos],hector.cultivosCosechados())
+      assert.equals(4,hector.cantidadCultivosCosechados())
+      assert.equals(game.at(5,1),hector.position())
+
+      const mercadoDos = new Mercado(position = game.at(5,2),monedasParaAbonar = 1000)
+      game.addVisual(mercadoDos)
+
+      hector.vender()
+
+      assert.equals("imposible vender algo!,no existe mercado en la parcela", hector.mensajePersonaje())
+
+      
+      //  SE MUEVE SE ENCUENTRA CON EL MERCADO Y LO VENDE
+      
+      hector.mover(arriba)
+      hector.vender()
+
+      assert.equals([maiz,trigo,tomaco,tomacoDos],hector.cultivosSembrados())
+      assert.equals([],hector.cultivosCosechados())
+      assert.equals(0,hector.cantidadCultivosCosechados())
+      assert.equals(game.at(5,2),hector.position())
+      assert.equals(410,hector.oroRecibido())
+
+
+      hector.mover(izquierda)
+
+      //COSECHA TRIGO NIVEL 3
+
+     const trigoDos = new Trigo(image = "wheat_0.png")
+     hector.sembrar(trigoDos)
+
+     assert.equals("sembrando... Trigo", hector.mensajePersonaje())
+     
+     assert.equals(5,hector.cantCultivosSembrados())
+     assert.equals(game.at(4,2),hector.position())
+
+     hector.regar()
+
+     assert.equals("regando... Trigo",hector.mensajePersonaje())
+     
+     hector.regar()
+
+     assert.equals("regando... Trigo",hector.mensajePersonaje())
+     
+     assert.equals(game.at(4,2),hector.position())
+
+     
+     hector.regar()
+
+     assert.equals("regando... Trigo",hector.mensajePersonaje())
+     
+     assert.equals(game.at(4,2),hector.position())
+
+          
+     hector.cosechar()
+
+     assert.equals("coseché! Trigo ve al mercado, vendelo presionando la v", hector.mensajePersonaje())
+
+     assert.equals(1,hector.cantidadCultivosCosechados())
+     assert.equals([trigoDos],hector.cultivosCosechados())
+     assert.equals(game.at(4,2),hector.position())
+  
+
+     hector.mover(derecha)
+     
+     hector.vender()
+     
+      assert.equals([maiz,trigo,tomaco,tomacoDos,trigoDos],hector.cultivosSembrados())
+      assert.equals([],hector.cultivosCosechados())
+      assert.equals(0,hector.cantidadCultivosCosechados())
+      assert.equals(game.at(5,2),hector.position())
+      assert.equals(610,hector.oroRecibido())
+      
+      
+      assert.equals(390,mercadoDos.monedasParaAbonar())
+   }
+    
+   test "hector siembra un maiz pero no lo cosecha  se dirige sin nada cosechado al mercado y no logra vender nada porque no tiene nada cosechado" {
+
+      const mercadoDos = new Mercado(position = game.at(5,6),monedasParaAbonar = 1000)
+      game.addVisual(mercadoDos)
+
+      const maiz = new Maiz(image = "corn_baby.png")
+      hector.sembrar(maiz)
+
+      hector.mover(arriba)
+      hector.vender()
+
+      assert.equals("imposible vender! granero vacío tenes que cosechar", hector.mensajePersonaje())
+
+
+     assert.equals(1,hector.cantCultivosSembrados())
+     assert.equals([],hector.cultivosCosechados())
+     assert.equals(0,hector.cantidadCultivosCosechados())
+      
+   }
+
+
+   test "hector intenta vender un producto pero el mercado no
+         no tiene suficiente dinero" {
+
+      hector.position(game.at(5,5))
+      const mercadoDos = new Mercado(position = game.at(5,6),monedasParaAbonar = 50)
+      game.addVisual(mercadoDos)
+
+      const tomaco = new Tomaco(image = "tomaco.png")
+      hector.sembrar(tomaco)
+
+      assert.equals("sembrando... Tomaco", hector.mensajePersonaje())
+      
+      hector.cosechar()
+
+      assert.equals("coseché! Tomaco ve al mercado, vendelo presionando la v", hector.mensajePersonaje())
+
+      assert.equals([tomaco],hector.cultivosCosechados())
+      assert.equals(1,hector.cantidadCultivosCosechados())
+  
+      hector.mover(arriba)
+
+      assert.throwsException({hector.vender()})
+      
+
+     assert.equals(1,hector.cantCultivosSembrados())
+     
+     assert.equals(1,hector.cantidadCultivosCosechados())
+      
+     assert.equals(0,hector.oroRecibido()) 
+     assert.equals(50,mercadoDos.monedasParaAbonar())
+ 
+   }
+
+}
