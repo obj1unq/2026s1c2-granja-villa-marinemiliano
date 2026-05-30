@@ -12,10 +12,10 @@ class Maiz {
 
 	var property granja = farmVille  	
 
-	method posicionarElementoEn(_nuevaPosicion,_elemento) {
+	method posicionarElementoEn(_nuevaPosicion) {
 		
 		self.position(_nuevaPosicion)
-		game.addVisual(_elemento) // Se agrega a modo de prueba	
+		game.addVisual(self) // Se agrega a modo de prueba	
 	}
 
 	method madurar() {image = "corn_adult.png"}
@@ -40,10 +40,10 @@ class Trigo {
 
 	var property granja = farmVille  
 
-	method posicionarElementoEn(_nuevaPosicion,_elemento) {
+	method posicionarElementoEn(_nuevaPosicion) {
 		
 		self.position(_nuevaPosicion)
-		game.addVisual(_elemento) // Se agrega a modo de prueba	
+		game.addVisual(self) // Se agrega a modo de prueba	
 	}
 
 	method madurar() {
@@ -105,7 +105,8 @@ class Tomaco {
 	var property granja = farmVille  
 
 	method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
-
+	method mensaje(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
+ 
 	
 	//MENSAJES PARAMETRIZADOS
 
@@ -118,16 +119,17 @@ class Tomaco {
 
 	method mensajePersonaje() {return interprete.mensajePersonaje()}
 	
-	method posicionarElementoEn(_nuevaPosicion,_elemento) {
+	method posicionarElementoEn(_nuevaPosicion) {
 		
 		self.position(_nuevaPosicion)
-		game.addVisual(_elemento) // Se agrega a modo de prueba	
+		game.addVisual(self) // Se agrega a modo de prueba	
 	}
 
 	method madurar() {
 		
-		if (self.position().y() == game.height()-1) {
+		return if ( self.position().y() == game.height()-1 && not granja.hayElementoEnPosicion(game.at(self.position().x(),0)) )  {
 		  
+
 			//position = game.at(self.position().x(), 0)
 			self.position(game.at(self.position().x(),0) )
 						
@@ -137,15 +139,25 @@ class Tomaco {
 			self.globosDeTexto(self,"teletransportacion!")
 
 
-		} else {		  
+
+		} else if ((self.position().y() == game.height()-1) && granja.hayElementoEnPosicion(game.at(self.position().x(),0))   )  {		  
 		
+
+			self.mensaje(self,"no pude teletransportarme!")
+
+			//OFICIA DE TRADUCTOR PARA LOS GLOBOS DE TEXTO EN LO_ TEST
+			self.globosDeTexto(self,"no pude teletransportarme!")
+
+
+		}
+		else
+		{
+
 			//tengo que validar antes que no haya un elemento arriba para 
 			//asi si poder mover el tomate (o sea regarlo)
 		    
-			self.validarPosicion("no me puedo mover hacia arriba,parcela ocupada.",
-			
-			game.at(position.x(),position.y() + 1))
-			
+			self.validarPosicion("no me puedo mover hacia arriba,parcela ocupada.",game.at(position.x(),position.y() + 1))
+
 			self.position(arriba.siguiente(self.position()))						
 		}
 	}
@@ -196,22 +208,18 @@ class Aspersor {
 								abajo.siguiente(position)]
   										
 
-
   method mensaje(_visual,_stringMensaje) {game.say(_visual,_stringMensaje)}
   method mensajeError(_stringMensaje) {self.error(_stringMensaje)}
 
 
-  method posicionarElementoEn(_nuevaPosicion,_elemento) { 
+  method posicionarElementoEn(_nuevaPosicion) {
 		
-		self.irAPosicion(_nuevaPosicion)
-		
-		game.addVisual(_elemento) // Se agrega a modo de prueba	
-   	
-  }
+		self.position(_nuevaPosicion)
+		game.addVisual(self) // Se agrega a modo de prueba	
+	}
 
   
   method irAPosicion(_nuevaPosicion){position = _nuevaPosicion}
-
 	
   method correrSistemaDeRiego() {
 
@@ -250,34 +258,9 @@ class Aspersor {
 
 	method soyCosechable() {return false}
 	
-    method soyMercado() {return true}
+    method soyMercado() {return false}
 
 }
-
-
-/*  
-	   Creo que entiendo cuál es el error. Primero, estás haciéndolo 
-	   de forma muy rara, estás moviendo el aspersor para verificar las colisiones, 
-	   lo cual podrías simplificar mucho.
-
-
-		Si querés seguir moviendo el aspersor, simplemente cambiá `cultivoEnLaPosicion()` para que use `game.colliders(self)`, para que te devuelva una lista y no te de error si está vacía, lo podrías filtrar con el `esCultivo()`, y también tendrías que cambiar `regarHacia(_nuevaPosicion)` para que llame `regadio()` sólo si se encontró posta un cultivo.
-
-		Lo que yo haría, es añadir un método helper, algo onda `regarPosicion(_posicion)`, que directamente use `game.getObjectsIn(position)`, y así actualizás `moverAspersorAVecinas()` (también habría que cambiarle el nombre xd) para que use ese `regarPosicion()`
-
-	
-	   Para solucionar esto, te recomiendo hacer la verificación 
-	   de las posiciones lindantes manteniendo el aspersor en su lugar,
-	   creando un método auxiliar "regarPosicion(_posicion)",
-	   usando game.getObjectsIn(_posicion.
-
-	   No te voy a mentir, este método está bastante feo. 
-	   Estás repitiendo demasiado código.
-
-		
-       Lo ideal sería que reemplaces todos los regarHacia y 
-	   irAPosicion por un par de regarPosicion(game.at(x, y)) 
- */
 
 class Mercado{
 
@@ -303,8 +286,6 @@ class Mercado{
 	
     var property monedasParaAbonar 
 
-
-   var property mercaderia = []
 
    method transaccion(_cultivos,_persona) {
 		

@@ -50,7 +50,7 @@ object hector {
 
 	method ponerElemento(_elemento) {
 	  
-	   _elemento.posicionarElementoEn(self.position(),_elemento)
+	   _elemento.posicionarElementoEn(self.position())
 	}
 
 

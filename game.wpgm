@@ -31,9 +31,9 @@ program farmville {
 	keyboard.w().onPressDo({ hector.mover(arriba)})
 	keyboard.s().onPressDo({ hector.mover(abajo)})	
 
-	keyboard.m().onPressDo({hector.sembrar(new Maiz(image = "corn_baby.png"))})
-	keyboard.t().onPressDo({hector.sembrar(new Trigo(image = "wheat_0.png"))})
-	keyboard.o().onPressDo({hector.sembrar(new Tomaco(image = "tomaco.png"))})
+	keyboard.m().onPressDo({hector.sembrar(new Maiz())})
+	keyboard.t().onPressDo({hector.sembrar(new Trigo())})
+	keyboard.o().onPressDo({hector.sembrar(new Tomaco())})
 	
 	keyboard.r().onPressDo({hector.regar()})	
 	keyboard.c().onPressDo({hector.cosechar()})
